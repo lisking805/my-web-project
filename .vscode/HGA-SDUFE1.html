@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山东财经大学人文地理协会</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind自定义颜色和字体 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2E7D32', // 主色调：自然绿
+            secondary: '#1976D2', // 辅助色：天空蓝
+            accent: '#F57C00', // 强调色：橙色
+            neutral: '#F5F5F5', // 中性色：浅灰
+            dark: '#1B5E20', // 深色：深绿
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0,0,0,0.25);
+      }
+      .transition-transform-opacity {
+        transition-property: transform, opacity;
+      }
+    }
+  </style>
+  
+  <style>
+    /* 基础动画定义 */
+    .fade-in {
+      animation: fadeIn 0.8s ease-in forwards;
+      opacity: 0;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* 滚动触发动画的延迟 */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    
+    /* 平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* 导航栏滚动效果 */
+    .navbar-scrolled {
+      background-color: rgba(46, 125, 50, 0.95);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body class="font-sans bg-gray-50 text-gray-800">
+  <!-- 导航栏 -->
+  <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-primary/80 text-white">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-globe text-2xl" aria-hidden="true"></i>
+        <span class="text-xl font-bold">山财人文地理协会</span>
+      </div>
+      
+      <!-- 桌面导航 -->
+      <div class="hidden md:flex space-x-8">
+        <a href="#home" class="hover:text-yellow-200 transition-colors">首页</a>
+        <a href="#about" class="hover:text-yellow-200 transition-colors">关于协会</a>
+        <a href="#activities" class="hover:text-yellow-200 transition-colors">活动回顾</a>
+        <a href="#join" class="hover:text-yellow-200 transition-colors">加入我们</a>
+      </div>
+      
+      <!-- 移动端菜单按钮 -->
+      <button id="menuBtn" class="md:hidden text-white focus:outline-none">
+        <i class="fa fa-bars text-xl" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobileMenu" class="md:hidden hidden bg-primary/95">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+        <a href="#home" class="py-2 hover:text-yellow-200 transition-colors">首页</a>
+        <a href="#about" class="py-2 hover:text-yellow-200 transition-colors">关于协会</a>
+        <a href="#activities" class="py-2 hover:text-yellow-200 transition-colors">活动回顾</a>
+        <a href="#join" class="py-2 hover:text-yellow-200 transition-colors">加入我们</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 首页横幅 -->
+  <header id="home" class="relative pt-16">
+    <div class="h-[80vh] min-h-[600px] bg-cover bg-center flex items-center" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/5d34e131a40047b6aa538c77cfca8887.jpg~tplv-a9rns2rl98-24:720:720.image?rk3s=1fb89129&x-expires=1757559329&x-signature=nzp6JIx2k3pCJ5GaJT3PGVQ4oZk%3D')">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <div class="container mx-auto px-6 relative z-10 text-white">
+        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold mb-4 text-shadow-lg fade-in">
+          山东财经大学<br>人文地理协会
+        </h1>
+        <p class="text-[clamp(1.1rem,2vw,1.5rem)] max-w-2xl mb-8 text-shadow fade-in delay-200">
+          探索地理奥秘，感受人文魅力，我们一起发现世界的美好
+        </p>
+        <a href="#join" class="inline-block bg-accent hover:bg-amber-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg fade-in delay-300">
+          加入我们 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-16">
+    <!-- 关于协会 -->
+    <section id="about" class="mb-24 scroll-animate">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-gray-800 mb-4 inline-block relative">
+          关于我们
+          <span class="absolute -bottom-2 left-0 w-1/2 h-1 bg-primary"></span>
+        </h2>
+        <p class="text-gray-600 max-w-3xl mx-auto">山东财经大学人文地理协会是一个以探索地理知识、体验人文风情为宗旨的学生社团</p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-300">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-compass text-2xl text-primary" aria-hidden="true"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">协会宗旨</h3>
+          <p class="text-gray-600">
+            我们致力于传播地理知识，增进同学们对人文地理的了解和热爱，通过实践活动提升学生的综合素质和探索精神。
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-300">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-users text-2xl text-primary" aria-hidden="true"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">我们的团队</h3>
+          <p class="text-gray-600">
+            由一群热爱地理、热爱自然、充满探索精神的学生组成，我们定期组织各类地理相关的实践活动和学术交流。
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-300">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-calendar-check-o text-2xl text-primary" aria-hidden="true"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">活动形式</h3>
+          <p class="text-gray-600">
+            包括野外考察、地理知识讲座、非遗文化体验、露营徒步等多种形式，让同学们在实践中学习，在体验中成长。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 活动回顾 -->
+    <section id="activities" class="mb-24 scroll-animate">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-gray-800 mb-4 inline-block relative">
+          活动回顾
+          <span class="absolute -bottom-2 left-0 w-1/2 h-1 bg-primary"></span>
+        </h2>
+        <p class="text-gray-600 max-w-3xl mx-auto">我们组织了丰富多彩的活动，让同学们在实践中感受地理与人文的魅力</p>
+      </div>
+      
+      <!-- 露营活动 -->
+      <div class="mb-20 scroll-animate">
+        <h3 class="text-2xl font-semibold mb-6 text-primary flex items-center">
+          <i class="fa fa-tree mr-3" aria-hidden="true"></i>
+          露营活动
+        </h3>
+        
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="md:flex">
+            <div class="md:w-1/2 relative overflow-hidden">
+              <img src="C:\Users\HUAWEI\Desktop\vscode\图一.jpg" 
+                   alt="湖畔露营活动照片" 
+                   class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+              <h4 class="text-xl font-semibold mb-4">湖畔露营体验</h4>
+              <p class="text-gray-600 mb-4">
+                在风景优美的湖畔，协会成员们开展了一次难忘的露营活动。大家搭起帐篷，欣赏着日落时分湖面的美景，感受大自然的宁静与美好。
+              </p>
+              <p class="text-gray-600">
+                夜晚，大家围坐在篝火旁，分享故事、唱歌，在星空下度过了愉快的时光，既增进了彼此的感情，也体验到了户外露营的乐趣。
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-8 bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="md:flex flex-row-reverse">
+            <div class="md:w-1/2 relative overflow-hidden">
+              <img src="C:\Users\HUAWEI\Desktop\vscode\图片二.jpg"
+                   class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+              <h4 class="text-xl font-semibold mb-4">篝火晚会</h4>
+              <p class="text-gray-600 mb-4">
+                篝火在夜色中跳跃，为露营活动增添了温暖与氛围。成员们围绕着篝火，进行着各种有趣的互动游戏，欢声笑语不断。
+              </p>
+              <p class="text-gray-600">
+                这不仅是一次亲近自然的体验，更是一次放松身心、释放压力的好机会，让大家在忙碌的学习生活中，寻得一片惬意的天地。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 爬山活动 -->
+      <div class="mb-20 scroll-animate">
+        <h3 class="text-2xl font-semibold mb-6 text-primary flex items-center">
+          <i class="fa fa-mountain mr-3" aria-hidden="true"></i>
+          爬山活动
+        </h3>
+        
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="md:flex">
+            <div class="md:w-1/2 relative overflow-hidden">
+              <img src="C:\Users\HUAWEI\Desktop\vscode\图片三.jpg" 
+                   alt="千佛山爬山活动照片" 
+                   class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+              <h4 class="text-xl font-semibold mb-4">千佛山登山之旅</h4>
+              <p class="text-gray-600 mb-4">
+                协会组织了千佛山爬山活动，成员们在古朴的牌坊下合影留念，开启了登山之旅。千佛山风景秀丽，登山过程中，大家欣赏着山间的美景，呼吸着新鲜的空气。
+              </p>
+              <p class="text-gray-600">
+                虽然登山有一定的体力消耗，但成员们相互鼓励、相互帮助，最终都成功登顶。在山顶，大家俯瞰着城市的景色，成就感满满，也更加体会到了坚持的意义。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 非遗宣传活动 -->
+      <div class="scroll-animate">
+        <h3 class="text-2xl font-semibold mb-6 text-primary flex items-center">
+          <i class="fa fa-hand-paper-o mr-3" aria-hidden="true"></i>
+          非遗宣传活动
+        </h3>
+        
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="md:flex">
+            <div class="md:w-1/2 relative overflow-hidden">
+              <img src="C:\Users\HUAWEI\Desktop\vscode\图片四.jpg" 
+                   alt="非遗宣传活动照片" 
+                   class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+              <h4 class="text-xl font-semibold mb-4">非遗文化进校园</h4>
+              <p class="text-gray-600 mb-4">
+                为了宣传非物质文化遗产，协会在校园内开展了相关活动。活动现场，绿色的帐篷下聚集了众多同学，大家积极参与，了解非遗文化的魅力。
+              </p>
+              <p class="text-gray-600">
+                通过这次活动，不仅让更多同学认识到了非遗文化的重要性，也为非遗文化的传承与发展贡献了一份力量，同时也丰富了校园文化生活。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 活动照片墙 -->
+    <section class="mb-24 scroll-animate">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-gray-800 mb-4 inline-block relative">
+          精彩瞬间
+          <span class="absolute -bottom-2 left-0 w-1/2 h-1 bg-primary"></span>
+        </h2>
+        <p class="text-gray-600 max-w-3xl mx-auto">记录我们活动中的美好时刻</p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\图六.jpg" 
+               alt="活动照片1" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\图七.jpg" 
+               alt="活动照片2" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\图八.jpg" 
+               alt="活动照片3" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\照片5.jpg"
+               alt="活动照片4" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\图九.jpg" 
+               alt="活动照片5" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\11.jpg" 
+               alt="活动照片6" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 md:col-span-2 lg:col-span-1">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\15.jpg" 
+               alt="活动照片7" 
+               class="w-full h-64 object-cover">
+        </div>
+        <div class="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 md:col-span-2 lg:col-span-1">
+          <img src="C:\Users\HUAWEI\Desktop\vscode\16.jpg" 
+               alt="活动照片8" 
+               class="w-full h-64 object-cover">
+      </div>
+    </section>
+
+    <!-- 加入我们 -->
+    <section id="join" class="scroll-animate">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-gray-800 mb-4 inline-block relative">
+          加入我们
+          <span class="absolute -bottom-2 left-0 w-1/2 h-1 bg-primary"></span>
+        </h2>
+        <p class="text-gray-600 max-w-3xl mx-auto">如果你也热爱地理、喜欢探索、向往自然，欢迎加入我们的大家庭</p>
+      </div>
+      
+      <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="md:w-1/2">
+            <div class="bg-primary/10 rounded-xl p-6 text-center">
+              <div class="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-md flex items-center justify-center">
+                <i class="fa fa-qq text-4xl text-blue-500" aria-hidden="true"></i>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">QQ交流群</h3>
+              <p class="text-gray-600 mb-4">加入我们的QQ群，获取最新活动信息</p>
+              <div class="bg-white rounded-lg p-3 inline-block shadow-sm">
+                <p class="font-mono text-lg font-bold text-gray-800">1051245562</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="md:w-1/2">
+            <div class="space-y-4">
+              <h3 class="text-xl font-semibold">我们期待这样的你</h3>
+              <ul class="space-y-2">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-primary mt-1 mr-2" aria-hidden="true"></i>
+                  <span>对地理、自然、人文文化有浓厚兴趣</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-primary mt-1 mr-2" aria-hidden="true"></i>
+                  <span>乐于探索新事物，有团队合作精神</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-primary mt-1 mr-2" aria-hidden="true"></i>
+                  <span>积极参与社团活动，遵守社团章程</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-primary mt-1 mr-2" aria-hidden="true"></i>
+                  <span>有责任心，愿意为社团发展贡献力量</span>
+                </li>
+              </ul>
+              
+              <a href="https://qun.qq.com/join.html?code=你的QQ群加群代码（若有）" 
+                 class="inline-block mt-4 bg-primary hover:bg-dark text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 text-center w-full md:w-auto">
+                <i class="fa fa-qq mr-2"></i> 立即加入QQ群
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fa fa-globe text-2xl" aria-hidden="true"></i>
+            <span class="text-xl font-bold">山财人文地理协会</span>
+          </div>
+          <p class="text-gray-400">
+            探索地理奥秘，感受人文魅力，<br>
+            我们一起发现世界的美好。
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">快速链接</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#home" class="hover:text-white transition-colors">首页</a></li>
+            <li><a href="#about" class="hover:text-white transition-colors">关于协会</a></li>
+            <li><a href="#activities" class="hover:text-white transition-colors">活动回顾</a></li>
+            <li><a href="#join" class="hover:text-white transition-colors">加入我们</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">联系我们</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li class="flex items-center">
+              <i class="fa fa-map-marker mr-3" aria-hidden="true"></i>
+              <span>山东财经大学校内</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-qq mr-3" aria-hidden="true"></i>
+              <span>QQ群：1051245562</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 pt-8 text-center text-gray-500">
+        <p>&copy; 2023 山东财经大学人文地理协会 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 返回顶部按钮 -->
+  <button id="backToTop" class="fixed bottom-8 right-8 bg-primary hover:bg-dark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible">
+    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <script>
+    // 移动端菜单切换
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      // 切换图标
+      const icon = menuBtn.querySelector('i');
+      if (icon.classList.contains('fa-bars')) {
+        icon.classList.replace('fa-bars', 'fa-times');
+      } else {
+        icon.classList.replace('fa-times', 'fa-bars');
+      }
+    });
+    
+    // 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('navbar-scrolled');
+      } else {
+        navbar.classList.remove('navbar-scrolled');
+      }
+    });
+    
+    // 返回顶部按钮
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.remove('opacity-0', 'invisible');
+        backToTopBtn.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopBtn.classList.remove('opacity-100', 'visible');
+        backToTopBtn.classList.add('opacity-0', 'invisible');
+      }
+    });
+    
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // 滚动动画
+    const scrollAnimateElements = document.querySelectorAll('.scroll-animate');
+    
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    scrollAnimateElements.forEach(element => {
+      observer.observe(element);
+    });
+    
+    // 点击移动端导航链接后关闭菜单
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        const icon = menuBtn.querySelector('i');
+        icon.classList.replace('fa-times', 'fa-bars');
+      });
+    });
+  </script>
+</body>
+
+</html>
