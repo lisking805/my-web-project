@@ -795,7 +795,7 @@ body {
                         <div class="farm-content active">
                             <div class="border rounded-lg overflow-hidden mb-6">
                                 <img src="lj6.jpg" alt="疗愈小菜园" class="w-full h-64 object-cover">
-                             git add .   <div class="p-4 bg-gray-50 border-t">
+                                <div class="p-4 bg-gray-50 border-t">
                                     <p class="text-sm text-gray-500">实景更新于：2025年10月15日</p>
                                     <p class="text-sm text-gray-500">对应位置：农场东侧3号区</p>
                                 </div>
@@ -1168,10 +1168,10 @@ tailwind.config = {
   </div>
 </header>
 
-<!-- 核心逻辑：纯真实数据交互（无模拟数据） -->
+<!-- 核心逻辑：添加localStorage持久化，解决评论刷新消失问题 -->
 <script>
-// 全局变量：存储真实提交的评论（仅在当前会话有效，刷新后清空；若需持久化可对接localStorage/后端）
-let realReviewsData = [];
+// 全局变量：从localStorage读取评论数据（持久化核心修改）
+let realReviewsData = JSON.parse(localStorage.getItem('kangyangReviews')) || [];
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. 评分星星交互
@@ -1189,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. 表单提交逻辑（纯真实数据，无模拟）
+  // 2. 表单提交逻辑（添加localStorage存储）
   const reviewForm = document.getElementById('reviewForm');
   reviewForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1223,25 +1223,25 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 3. 生成真实评论数据（无任何模拟值，全部来自用户输入）
+    // 3. 生成真实评论数据（无任何模拟值）
     const newRealReview = {
-      id: Date.now(), // 时间戳作为唯一ID（真实且不重复）
+      id: Date.now(), // 时间戳作为唯一ID
       name: userName,
       service: serviceType,
       rating: selectedRating,
       content: reviewContent,
       submitTime: new Date().toLocaleString('zh-CN'), // 真实提交时间
-      // 标签由用户评价内容提取（示例：简单关键词匹配，纯真实逻辑）
       tags: getRealTagsFromContent(reviewContent)
     };
 
-    // 4. 存入真实评论数组（核心：无模拟，仅存用户提交的内容）
+    // 4. 存入数组 + 持久化到localStorage（核心修改）
     realReviewsData.unshift(newRealReview);
+    localStorage.setItem('kangyangReviews', JSON.stringify(realReviewsData)); // 新增：保存到本地存储
 
-    // 5. 动态渲染真实评论列表
+    // 5. 动态渲染评论列表
     renderRealReviewsList();
 
-    // 6. 动态更新统计数据（基于真实提交的评论）
+    // 6. 动态更新统计数据
     updateRealReviewStats();
 
     // 7. 重置表单和评分
@@ -1255,16 +1255,27 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('评价提交成功！已展示在最新评价列表中');
   });
 
-  // 3. 初始化渲染（无模拟数据，初始为空）
+  // 3. 初始化渲染
   renderRealReviewsList();
   updateRealReviewStats();
 
-  // 4. 筛选/排序逻辑（基于真实数据）
+  // 4. 筛选/排序逻辑
   document.getElementById('reviewFilter').addEventListener('change', renderRealReviewsList);
   document.getElementById('reviewSort').addEventListener('change', renderRealReviewsList);
 });
 
-// 辅助函数：从用户真实评价内容提取标签（无模拟，纯真实逻辑）
+// 新增：清空所有评论的函数
+function clearAllReviews() {
+  if (confirm('确定要清空所有评论吗？此操作不可恢复！')) {
+    realReviewsData = [];
+    localStorage.removeItem('kangyangReviews'); // 删除本地存储的评论
+    renderRealReviewsList();
+    updateRealReviewStats();
+    alert('所有评论已清空');
+  }
+}
+
+// 辅助函数：从用户评价内容提取标签
 function getRealTagsFromContent(content) {
   const tags = [];
   // 关键词匹配（可根据需求扩展）
@@ -1279,7 +1290,7 @@ function getRealTagsFromContent(content) {
   return tags.length > 0 ? tags : ['真实评价'];
 }
 
-// 渲染真实评论列表（无模拟，仅展示用户提交的内容）
+// 渲染真实评论列表
 function renderRealReviewsList() {
   const container = document.getElementById('reviewsList');
   container.innerHTML = '';
@@ -1301,7 +1312,7 @@ function renderRealReviewsList() {
   // 复制真实数据避免修改原数组
   let filteredReviews = [...realReviewsData];
 
-  // 筛选逻辑（基于真实数据）
+  // 筛选逻辑
   if (filterValue !== 'all') {
     if (['5', '4', '3'].includes(filterValue)) {
       // 按评分筛选
@@ -1313,7 +1324,7 @@ function renderRealReviewsList() {
     }
   }
 
-  // 排序逻辑（基于真实数据）
+  // 排序逻辑
   if (sortValue === 'highest') {
     filteredReviews.sort((a, b) => b.rating - a.rating); // 高分优先
   } else if (sortValue === 'lowest') {
@@ -1322,7 +1333,7 @@ function renderRealReviewsList() {
     filteredReviews.sort((a, b) => b.id - a.id); // 最新提交优先
   }
 
-  // 渲染每条真实提交的评论（匹配截图样式）
+  // 渲染每条真实提交的评论
   filteredReviews.forEach(review => {
     const reviewCard = document.createElement('div');
     reviewCard.className = 'bg-white rounded-lg shadow-card p-4 mb-4';
@@ -1355,11 +1366,11 @@ function renderRealReviewsList() {
   });
 }
 
-// 更新真实评价统计（无模拟，仅计算用户提交的评论）
+// 更新真实评价统计
 function updateRealReviewStats() {
   const totalReviews = realReviewsData.length;
   
-  // 1. 综合评分（基于真实数据）
+  // 1. 综合评分
   const avgRatingEl = document.getElementById('avgRating');
   if (totalReviews === 0) {
     avgRatingEl.textContent = '0.0';
@@ -1369,7 +1380,7 @@ function updateRealReviewStats() {
     avgRatingEl.textContent = avgRating;
   }
 
-  // 2. 星级分布（基于真实数据）
+  // 2. 星级分布
   const ratingCounts = { 5:0, 4:0, 3:0, 2:0, 1:0 };
   realReviewsData.forEach(r => ratingCounts[r.rating]++);
 
@@ -1379,7 +1390,7 @@ function updateRealReviewStats() {
     document.getElementById(`star${star}Percent`).textContent = `${percent}%`;
   });
 
-  // 3. 服务评价分布（基于真实提交的服务类型）
+  // 3. 服务评价分布
   const serviceMap = {};
   realReviewsData.forEach(r => {
     if (!serviceMap[r.service]) {
@@ -1406,17 +1417,17 @@ function updateRealReviewStats() {
     }
   });
 
-  // 4. 评价总数（真实数量）
+  // 4. 评价总数
   document.getElementById('reviewCount').textContent = totalReviews;
 }
 </script>
 
-<!-- 主内容区：用户评价模块（纯真实数据交互） -->
+<!-- 主内容区：用户评价模块 -->
 <section id="reviews" class="bg-neutral min-h-screen py-8 px-4">
   <div class="container mx-auto max-w-6xl">
     <!-- 表单+统计区域 -->
     <div class="grid md:grid-cols-2 gap-6 mb-8">
-      <!-- 左侧：分享您的体验（真实表单） -->
+      <!-- 左侧：分享您的体验 -->
       <div class="bg-white rounded-lg shadow-card p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">分享您的体验</h2>
         
@@ -1432,7 +1443,7 @@ function updateRealReviewStats() {
           </div>
         </div>
         
-        <!-- 姓名（真实输入） -->
+        <!-- 姓名 -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm mb-2">您的姓名</label>
           <input type="text" id="reviewName" 
@@ -1440,7 +1451,7 @@ function updateRealReviewStats() {
                  placeholder="请输入您的姓名" required>
         </div>
         
-        <!-- 服务类型（真实选择） -->
+        <!-- 服务类型 -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm mb-2">您体验的服务</label>
           <select id="reviewService" 
@@ -1454,7 +1465,7 @@ function updateRealReviewStats() {
           </select>
         </div>
         
-        <!-- 评价内容（真实输入） -->
+        <!-- 评价内容 -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm mb-2">您的评价</label>
           <textarea id="reviewContent" rows="4"
@@ -1462,7 +1473,7 @@ function updateRealReviewStats() {
                     placeholder="请分享您的真实体验和感受..." required></textarea>
         </div>
         
-        <!-- 确认勾选（真实确认） -->
+        <!-- 确认勾选 -->
         <div class="mb-6">
           <label class="flex items-center">
             <input type="checkbox" id="agreeCheck" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary" required>
@@ -1479,7 +1490,7 @@ function updateRealReviewStats() {
         <form id="reviewForm"></form>
       </div>
       
-      <!-- 右侧：评价统计（基于真实数据） -->
+      <!-- 右侧：评价统计 -->
       <div class="bg-white rounded-lg shadow-card p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">评价统计</h2>
         
@@ -1497,7 +1508,7 @@ function updateRealReviewStats() {
             <span class="text-xs text-gray-500 mt-1 block">综合评分</span>
           </div>
           
-          <!-- 星级分布（真实数据计算） -->
+          <!-- 星级分布 -->
           <div class="flex-1 space-y-2">
             <!-- 5星 -->
             <div class="flex items-center">
@@ -1542,7 +1553,7 @@ function updateRealReviewStats() {
           </div>
         </div>
         
-        <!-- 服务评价分布（真实数据计算） -->
+        <!-- 服务评价分布 -->
         <h3 class="text-lg font-semibold text-gray-800 mb-4">服务评价分布</h3>
         <div class="space-y-3 mb-6">
           <!-- 老年长居康养 -->
@@ -1579,18 +1590,22 @@ function updateRealReviewStats() {
           </div>
         </div>
         
-        <!-- 评价总数（真实数量） -->
+        <!-- 评价总数 -->
         <div class="text-center text-sm text-gray-500">
           基于 <span id="reviewCount">0</span> 条用户真实评价
         </div>
       </div>
     </div>
 
-    <!-- 最新评价列表（仅展示真实提交的评论） -->
+    <!-- 最新评价列表 -->
     <div class="mb-8">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-800">最新评价</h2>
         <div class="flex space-x-4">
+          <!-- 新增：清空评论按钮 -->
+          <button onclick="clearAllReviews()" class="text-sm text-red-500 hover:underline transition-colors">
+            清空所有评论
+          </button>
           <!-- 筛选下拉 -->
           <select id="reviewFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
             <option value="all">全部评价</option>
@@ -1618,7 +1633,7 @@ function updateRealReviewStats() {
     </div>
   </div>
 
-  <!-- 回到顶部按钮（匹配截图） -->
+  <!-- 回到顶部按钮 -->
   <button class="fixed bottom-6 right-6 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
     <i class="fa fa-arrow-up"></i>
   </button>
