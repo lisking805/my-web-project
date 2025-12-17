@@ -1121,350 +1121,576 @@ body {
             </div>
         </div>
     </section>
+<!-- 引入基础依赖 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 用户评价系统 -->
-    <section id="reviews" class="py-20">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">用户真实评价</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">来自真实体验者的反馈，每一条评价都是我们进步的动力</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-10 mb-16">
-                <!-- 评价表单 -->
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <h3 class="text-2xl font-bold mb-6">分享您的体验</h3>
-                    
-                    <form id="reviewForm">
-                        <div class="mb-6">
-                            <label class="block text-gray-700 font-medium mb-3">您的评分</label>
-                            <div class="flex" id="ratingStars">
-                                <i class="fa fa-star text-2xl text-gray-300 rating-star" data-rating="1"></i>
-                                <i class="fa fa-star text-2xl text-gray-300 rating-star" data-rating="2"></i>
-                                <i class="fa fa-star text-2xl text-gray-300 rating-star" data-rating="3"></i>
-                                <i class="fa fa-star text-2xl text-gray-300 rating-star" data-rating="4"></i>
-                                <i class="fa fa-star text-2xl text-gray-300 rating-star" data-rating="5"></i>
-                            </div>
-                            <input type="hidden" id="ratingValue" name="rating" value="0">
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label for="reviewName" class="block text-gray-700 font-medium mb-2">您的姓名</label>
-                            <input type="text" id="reviewName" name="reviewName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请输入您的姓名" required>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label for="reviewService" class="block text-gray-700 font-medium mb-2">您体验的服务</label>
-                            <select id="reviewService" name="reviewService" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" required>
-                                <option value="">请选择服务类型</option>
-                                <option value="elder">老年长居康养</option>
-                                <option value="worker">上班族短途疗愈</option>
-                                <option value="family">家庭康养套餐</option>
-                                <option value="farm">农场认养</option>
-                                <option value="camping">自然疗愈露营</option>
-                                <option value="culture">文化康养之旅</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label for="reviewContent" class="block text-gray-700 font-medium mb-2">您的评价</label>
-                            <textarea id="reviewContent" name="reviewContent" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请分享您的真实体验和感受..." required></textarea>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label class="flex items-center">
-                                <input type="checkbox" class="form-checkbox h-5 w-5 text-primary" required>
-                                <span class="ml-2 text-gray-700">我确认以上评价真实有效</span>
-                            </label>
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg text-lg font-medium transition-custom shadow-md hover:shadow-lg">
-                            提交评价
-                        </button>
-                    </form>
-                </div>
-                
-                <!-- 评价统计 -->
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <h3 class="text-2xl font-bold mb-6">评价统计</h3>
-                    
-                    <div class="flex items-center mb-10">
-                        <div class="text-center mr-8">
-                            <span class="block text-5xl font-bold text-primary">4.7</span>
-                            <div class="flex text-accent justify-center mt-1">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-half-o"></i>
-                            </div>
-                            <span class="text-gray-500 mt-1 block">综合评分</span>
-                        </div>
-                        
-                        <div class="flex-1">
-                            <!-- 5星 -->
-                            <div class="flex items-center mb-2">
-                                <span class="w-8 text-sm">5星</span>
-                                <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-accent h-2 rounded-full" style="width: 72%"></div>
-                                </div>
-                                <span class="w-8 text-sm text-right">72%</span>
-                            </div>
-                            
-                            <!-- 4星 -->
-                            <div class="flex items-center mb-2">
-                                <span class="w-8 text-sm">4星</span>
-                                <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-accent h-2 rounded-full" style="width: 21%"></div>
-                                </div>
-                                <span class="w-8 text-sm text-right">21%</span>
-                            </div>
-                            
-                            <!-- 3星 -->
-                            <div class="flex items-center mb-2">
-                                <span class="w-8 text-sm">3星</span>
-                                <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-accent h-2 rounded-full" style="width: 5%"></div>
-                                </div>
-                                <span class="w-8 text-sm text-right">5%</span>
-                            </div>
-                            
-                            <!-- 2星 -->
-                            <div class="flex items-center mb-2">
-                                <span class="w-8 text-sm">2星</span>
-                                <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-accent h-2 rounded-full" style="width: 1%"></div>
-                                </div>
-                                <span class="w-8 text-sm text-right">1%</span>
-                            </div>
-                            
-                            <!-- 1星 -->
-                            <div class="flex items-center">
-                                <span class="w-8 text-sm">1星</span>
-                                <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-accent h-2 rounded-full" style="width: 1%"></div>
-                                </div>
-                                <span class="w-8 text-sm text-right">1%</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h4 class="text-xl font-semibold mb-4">服务评价分布</h4>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <span class="w-32">老年长居康养</span>
-                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                <div class="bg-primary h-2 rounded-full" style="width: 94%"></div>
-                            </div>
-                            <span class="w-10 text-right">4.7</span>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <span class="w-32">上班族短途疗愈</span>
-                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                <div class="bg-secondary h-2 rounded-full" style="width: 98%"></div>
-                            </div>
-                            <span class="w-10 text-right">4.9</span>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <span class="w-32">家庭康养套餐</span>
-                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                <div class="bg-accent h-2 rounded-full" style="width: 86%"></div>
-                            </div>
-                            <span class="w-10 text-right">4.3</span>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <span class="w-32">农场认养</span>
-                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-500 h-2 rounded-full" style="width: 92%"></div>
-                            </div>
-                            <span class="w-10 text-right">4.6</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 text-center">
-                        <span class="text-gray-500">基于 156 条用户真实评价</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 评价列表 -->
-            <div>
-                <div class="flex justify-between items-center mb-8">
-                    <h3 class="text-2xl font-bold">最新评价</h3>
-                    
-                    <div class="flex gap-3">
-                        <select id="reviewFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
-                            <option value="all">全部评价</option>
-                            <option value="5">5星评价</option>
-                            <option value="4">4星及以上</option>
-                            <option value="3">3星及以上</option>
-                            <option value="elder">老年长居康养</option>
-                            <option value="worker">上班族短途疗愈</option>
-                            <option value="family">家庭康养套餐</option>
-                        </select>
-                        
-                        <select id="reviewSort" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
-                            <option value="latest">最新优先</option>
-                            <option value="highest">评分最高</option>
-                            <option value="lowest">评分最低</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="space-y-6" id="reviewsContainer">
-                    <!-- 评价1 -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
-                                    <img src="https://picsum.photos/id/64/100/100" alt="陈阿姨" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold">陈阿姨 · 68岁</h4>
-                                    <p class="text-sm text-gray-500">老年长居康养 · 2023-10-12</p>
-                                </div>
-                            </div>
-                            <div class="flex text-accent">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">"在这里住了三个月，身体好多了，每天和老姐妹们一起参加活动，生活很充实。王阿姨做的农家菜特别合胃口，都是自己种的蔬菜，健康又美味。医生每周都来检查身体，很放心。"</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">住宿舒适</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">饮食健康</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">服务周到</span>
-                        </div>
-                    </div>
-                    
-                    <!-- 评价2 -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
-                                    <img src="https://picsum.photos/id/91/100/100" alt="李先生" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold">李先生 · 35岁</h4>
-                                    <p class="text-sm text-gray-500">上班族短途疗愈 · 2023-10-10</p>
-                                </div>
-                            </div>
-                            <div class="flex text-accent">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">"连续加班一个月后，在这里度过了一个周末，简直是重生！正念冥想课让我找回了内心的平静，海边散步时的新鲜空气让肺部得到了彻底清洁。下周打算带团队来做一次团建疗愈。"</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">减压效果好</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">环境安静</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">冥想指导专业</span>
-                        </div>
-                    </div>
-                    
-                    <!-- 评价3 -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
-                                    <img src="https://picsum.photos/id/237/100/100" alt="赵女士" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold">赵女士 · 38岁</h4>
-                                    <p class="text-sm text-gray-500">家庭康养套餐 · 2023-10-05</p>
-                                </div>
-                            </div>
-                            <div class="flex text-accent">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-o"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">"国庆带父母和孩子来的，整体体验很好。父母很喜欢这里的慢生活，孩子在农场玩得很开心。唯一的小遗憾是假期人有点多，有些活动需要排队。建议平时来体验会更好。"</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">适合家庭</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">孩子喜欢</span>
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">假期人多</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-8 text-center">
-                    <button id="loadMoreReviews" class="bg-white hover:bg-gray-50 text-primary border border-primary px-6 py-3 rounded-full font-medium transition-custom shadow-sm hover:shadow">
-                        加载更多评价
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Tailwind配置（匹配截图紫色系） -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#7c3aed', // 主紫色（匹配截图）
+        secondary: '#a855f7', // 浅紫
+        accent: '#c084fc', // 高亮紫
+        neutral: '#faf5ff', // 背景浅紫
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      }
+    }
+  }
+}
+</script>
 
-    <!-- 预约表单 -->
-    <section id="booking" class="py-20 bg-neutral">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">预约康养体验</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">填写下方表单，开始您的乡村康养之旅</p>
-            </div>
-            
-            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-8 md:p-10">
-                <form id="bookingForm">
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label for="name" class="block text-gray-700 font-medium mb-2">姓名</label>
-                            <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请输入您的姓名" required>
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-gray-700 font-medium mb-2">电话</label>
-                            <input type="tel" id="phone" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请输入您的手机号码" required>
-                        </div>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label for="service" class="block text-gray-700 font-medium mb-2">预约服务</label>
-                            <select id="service" name="service" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" required>
-                                <option value="">请选择服务类型</option>
-                                <option value="elder">老年长居康养</option>
-                                <option value="worker">上班族短途疗愈</option>
-                                <option value="family">家庭康养套餐</option>
-                                <option value="farm">农场认养</option>
-                                <option value="camping">自然疗愈露营</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="date" class="block text-gray-700 font-medium mb-2">预计日期</label>
-                            <input type="date" id="date" name="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" required>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label for="people" class="block text-gray-700 font-medium mb-2">参与人数</label>
-                        <input type="number" id="people" name="people" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请输入参与人数" required>
-                    </div>
-                    
-                    <div class="mb-8">
-                        <label for="message" class="block text-gray-700 font-medium mb-2">特殊需求</label>
-                        <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom" placeholder="请告诉我们您的特殊需求或健康状况"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg text-lg font-medium transition-custom shadow-md hover:shadow-lg">
-                        提交预约
-                    </button>
-                </form>
-            </div>
+<!-- 页面头部导航（匹配截图） -->
+<header class="bg-white shadow-sm sticky top-0 z-10">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <span class="text-primary font-bold text-xl">俚岛康养</span>
+    </div>
+    <nav class="hidden md:flex space-x-6">
+      <a href="#" class="text-gray-700 hover:text-primary">首页</a>
+      <a href="#" class="text-gray-700 hover:text-primary">康养套餐</a>
+      <a href="#" class="text-gray-700 hover:text-primary">农场认养</a>
+      <a href="#" class="text-gray-700 hover:text-primary">场景体验</a>
+      <a href="#" class="text-gray-700 hover:text-primary">关于我们</a>
+      <a href="#reviews" class="text-primary font-medium">用户评价</a>
+      <a href="#" class="text-gray-700 hover:text-primary">联系我们</a>
+    </nav>
+    <button class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md transition-colors">
+      立即预约
+    </button>
+  </div>
+</header>
+
+<!-- 核心逻辑：纯真实数据交互（无模拟数据） -->
+<script>
+// 全局变量：存储真实提交的评论（仅在当前会话有效，刷新后清空；若需持久化可对接localStorage/后端）
+let realReviewsData = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. 评分星星交互
+  const ratingStars = document.querySelectorAll('.rating-star');
+  let selectedRating = 0;
+
+  ratingStars.forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.rating);
+      // 点亮选中的星星
+      ratingStars.forEach((s, idx) => {
+        s.classList.toggle('text-primary', idx < selectedRating);
+        s.classList.toggle('text-gray-300', idx >= selectedRating);
+      });
+    });
+  });
+
+  // 2. 表单提交逻辑（纯真实数据，无模拟）
+  const reviewForm = document.getElementById('reviewForm');
+  reviewForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // 1. 获取表单真实输入数据
+    const userName = document.getElementById('reviewName').value.trim();
+    const serviceSelect = document.getElementById('reviewService');
+    const serviceType = serviceSelect.options[serviceSelect.selectedIndex].text;
+    const reviewContent = document.getElementById('reviewContent').value.trim();
+    const agreeCheckbox = document.getElementById('agreeCheck').checked;
+
+    // 2. 严格校验（确保数据真实有效）
+    if (!userName) {
+      alert('请填写您的姓名！');
+      return;
+    }
+    if (serviceSelect.value === '') {
+      alert('请选择体验的服务类型！');
+      return;
+    }
+    if (selectedRating === 0) {
+      alert('请为您的体验评分！');
+      return;
+    }
+    if (!reviewContent) {
+      alert('请填写您的评价内容！');
+      return;
+    }
+    if (!agreeCheckbox) {
+      alert('请确认您的评价真实有效！');
+      return;
+    }
+
+    // 3. 生成真实评论数据（无任何模拟值，全部来自用户输入）
+    const newRealReview = {
+      id: Date.now(), // 时间戳作为唯一ID（真实且不重复）
+      name: userName,
+      service: serviceType,
+      rating: selectedRating,
+      content: reviewContent,
+      submitTime: new Date().toLocaleString('zh-CN'), // 真实提交时间
+      // 标签由用户评价内容提取（示例：简单关键词匹配，纯真实逻辑）
+      tags: getRealTagsFromContent(reviewContent)
+    };
+
+    // 4. 存入真实评论数组（核心：无模拟，仅存用户提交的内容）
+    realReviewsData.unshift(newRealReview);
+
+    // 5. 动态渲染真实评论列表
+    renderRealReviewsList();
+
+    // 6. 动态更新统计数据（基于真实提交的评论）
+    updateRealReviewStats();
+
+    // 7. 重置表单和评分
+    reviewForm.reset();
+    ratingStars.forEach(s => {
+      s.classList.remove('text-primary');
+      s.classList.add('text-gray-300');
+    });
+    selectedRating = 0;
+
+    alert('评价提交成功！已展示在最新评价列表中');
+  });
+
+  // 3. 初始化渲染（无模拟数据，初始为空）
+  renderRealReviewsList();
+  updateRealReviewStats();
+
+  // 4. 筛选/排序逻辑（基于真实数据）
+  document.getElementById('reviewFilter').addEventListener('change', renderRealReviewsList);
+  document.getElementById('reviewSort').addEventListener('change', renderRealReviewsList);
+});
+
+// 辅助函数：从用户真实评价内容提取标签（无模拟，纯真实逻辑）
+function getRealTagsFromContent(content) {
+  const tags = [];
+  // 关键词匹配（可根据需求扩展）
+  if (content.includes('舒适') || content.includes('住宿')) tags.push('住宿舒适');
+  if (content.includes('健康') || content.includes('饮食')) tags.push('饮食健康');
+  if (content.includes('服务')) tags.push('服务周到');
+  if (content.includes('减压') || content.includes('放松')) tags.push('减压效果好');
+  if (content.includes('安静') || content.includes('环境')) tags.push('环境安静');
+  if (content.includes('家庭') || content.includes('孩子')) tags.push('适合家庭');
+  
+  // 若无匹配标签，显示“真实评价”
+  return tags.length > 0 ? tags : ['真实评价'];
+}
+
+// 渲染真实评论列表（无模拟，仅展示用户提交的内容）
+function renderRealReviewsList() {
+  const container = document.getElementById('reviewsList');
+  container.innerHTML = '';
+
+  // 无评论时显示提示
+  if (realReviewsData.length === 0) {
+    container.innerHTML = `
+      <div class="bg-white rounded-lg shadow-card p-6 text-center text-gray-500">
+        暂无用户评价，快来提交您的真实体验吧！
+      </div>
+    `;
+    return;
+  }
+
+  // 获取筛选/排序条件
+  const filterValue = document.getElementById('reviewFilter').value;
+  const sortValue = document.getElementById('reviewSort').value;
+
+  // 复制真实数据避免修改原数组
+  let filteredReviews = [...realReviewsData];
+
+  // 筛选逻辑（基于真实数据）
+  if (filterValue !== 'all') {
+    if (['5', '4', '3'].includes(filterValue)) {
+      // 按评分筛选
+      const minRating = parseInt(filterValue);
+      filteredReviews = filteredReviews.filter(r => r.rating >= minRating);
+    } else {
+      // 按服务类型筛选
+      filteredReviews = filteredReviews.filter(r => r.service.includes(filterValue));
+    }
+  }
+
+  // 排序逻辑（基于真实数据）
+  if (sortValue === 'highest') {
+    filteredReviews.sort((a, b) => b.rating - a.rating); // 高分优先
+  } else if (sortValue === 'lowest') {
+    filteredReviews.sort((a, b) => a.rating - b.rating); // 低分优先
+  } else {
+    filteredReviews.sort((a, b) => b.id - a.id); // 最新提交优先
+  }
+
+  // 渲染每条真实提交的评论（匹配截图样式）
+  filteredReviews.forEach(review => {
+    const reviewCard = document.createElement('div');
+    reviewCard.className = 'bg-white rounded-lg shadow-card p-4 mb-4';
+    
+    // 生成真实评分对应的星级
+    const starsHtml = Array(review.rating).fill('<i class="fa fa-star text-primary"></i>').join('');
+
+    reviewCard.innerHTML = `
+      <div class="flex justify-between items-start mb-3">
+        <div class="flex items-center">
+          <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3 flex items-center justify-center">
+            <span class="text-primary font-bold">${review.name.charAt(0)}</span>
+          </div>
+          <div>
+            <h4 class="font-medium">${review.name}</h4>
+            <p class="text-xs text-gray-500">${review.service} · ${review.submitTime}</p>
+          </div>
         </div>
-    </section>
+        <div class="flex">${starsHtml}</div>
+      </div>
+      <p class="text-gray-700 text-sm mb-3">${review.content}</p>
+      <div class="flex flex-wrap gap-2">
+        ${review.tags.map(tag => `
+          <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">${tag}</span>
+        `).join('')}
+      </div>
+    `;
+
+    container.appendChild(reviewCard);
+  });
+}
+
+// 更新真实评价统计（无模拟，仅计算用户提交的评论）
+function updateRealReviewStats() {
+  const totalReviews = realReviewsData.length;
+  
+  // 1. 综合评分（基于真实数据）
+  const avgRatingEl = document.getElementById('avgRating');
+  if (totalReviews === 0) {
+    avgRatingEl.textContent = '0.0';
+  } else {
+    const totalRating = realReviewsData.reduce((sum, r) => sum + r.rating, 0);
+    const avgRating = (totalRating / totalReviews).toFixed(1);
+    avgRatingEl.textContent = avgRating;
+  }
+
+  // 2. 星级分布（基于真实数据）
+  const ratingCounts = { 5:0, 4:0, 3:0, 2:0, 1:0 };
+  realReviewsData.forEach(r => ratingCounts[r.rating]++);
+
+  [5,4,3,2,1].forEach(star => {
+    const percent = totalReviews > 0 ? Math.round((ratingCounts[star] / totalReviews) * 100) : 0;
+    document.getElementById(`star${star}Bar`).style.width = `${percent}%`;
+    document.getElementById(`star${star}Percent`).textContent = `${percent}%`;
+  });
+
+  // 3. 服务评价分布（基于真实提交的服务类型）
+  const serviceMap = {};
+  realReviewsData.forEach(r => {
+    if (!serviceMap[r.service]) {
+      serviceMap[r.service] = { total:0, score:0 };
+    }
+    serviceMap[r.service].total++;
+    serviceMap[r.service].score += r.rating;
+  });
+
+  // 仅展示有数据的服务类型
+  const serviceList = ['老年长居康养', '上班族短途疗愈', '家庭康养套餐', '农场认养'];
+  serviceList.forEach(service => {
+    const barId = `service${service.replace(/[^a-zA-Z]/g, '')}Bar`;
+    const scoreId = `service${service.replace(/[^a-zA-Z]/g, '')}Score`;
+    
+    if (serviceMap[service]) {
+      const avgScore = (serviceMap[service].score / serviceMap[service].total).toFixed(1);
+      const percent = Math.round((avgScore / 5) * 100);
+      document.getElementById(barId).style.width = `${percent}%`;
+      document.getElementById(scoreId).textContent = avgScore;
+    } else {
+      document.getElementById(barId).style.width = '0%';
+      document.getElementById(scoreId).textContent = '0.0';
+    }
+  });
+
+  // 4. 评价总数（真实数量）
+  document.getElementById('reviewCount').textContent = totalReviews;
+}
+</script>
+
+<!-- 主内容区：用户评价模块（纯真实数据交互） -->
+<section id="reviews" class="bg-neutral min-h-screen py-8 px-4">
+  <div class="container mx-auto max-w-6xl">
+    <!-- 表单+统计区域 -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <!-- 左侧：分享您的体验（真实表单） -->
+      <div class="bg-white rounded-lg shadow-card p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">分享您的体验</h2>
+        
+        <!-- 评分 -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm mb-3">您的评分</label>
+          <div class="flex" id="ratingStars">
+            <i class="fa fa-star text-xl text-gray-300 rating-star cursor-pointer" data-rating="1"></i>
+            <i class="fa fa-star text-xl text-gray-300 rating-star cursor-pointer" data-rating="2"></i>
+            <i class="fa fa-star text-xl text-gray-300 rating-star cursor-pointer" data-rating="3"></i>
+            <i class="fa fa-star text-xl text-gray-300 rating-star cursor-pointer" data-rating="4"></i>
+            <i class="fa fa-star text-xl text-gray-300 rating-star cursor-pointer" data-rating="5"></i>
+          </div>
+        </div>
+        
+        <!-- 姓名（真实输入） -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm mb-2">您的姓名</label>
+          <input type="text" id="reviewName" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                 placeholder="请输入您的姓名" required>
+        </div>
+        
+        <!-- 服务类型（真实选择） -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm mb-2">您体验的服务</label>
+          <select id="reviewService" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" required>
+            <option value="">请选择服务类型</option>
+            <option value="elder">老年长居康养</option>
+            <option value="worker">上班族短途疗愈</option>
+            <option value="family">家庭康养套餐</option>
+            <option value="farm">农场认养</option>
+            <option value="camping">自然疗愈露营</option>
+          </select>
+        </div>
+        
+        <!-- 评价内容（真实输入） -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm mb-2">您的评价</label>
+          <textarea id="reviewContent" rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                    placeholder="请分享您的真实体验和感受..." required></textarea>
+        </div>
+        
+        <!-- 确认勾选（真实确认） -->
+        <div class="mb-6">
+          <label class="flex items-center">
+            <input type="checkbox" id="agreeCheck" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary" required>
+            <span class="ml-2 text-sm text-gray-700">我确认以上评价真实有效</span>
+          </label>
+        </div>
+        
+        <!-- 提交按钮 -->
+        <button type="submit" form="reviewForm"
+                class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-md font-medium transition-colors">
+          提交评价
+        </button>
+        
+        <form id="reviewForm"></form>
+      </div>
+      
+      <!-- 右侧：评价统计（基于真实数据） -->
+      <div class="bg-white rounded-lg shadow-card p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">评价统计</h2>
+        
+        <!-- 综合评分 -->
+        <div class="flex items-center mb-8">
+          <div class="mr-6">
+            <span id="avgRating" class="block text-5xl font-bold text-primary">0.0</span>
+            <div class="flex text-primary mt-1">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star-half-o"></i>
+            </div>
+            <span class="text-xs text-gray-500 mt-1 block">综合评分</span>
+          </div>
+          
+          <!-- 星级分布（真实数据计算） -->
+          <div class="flex-1 space-y-2">
+            <!-- 5星 -->
+            <div class="flex items-center">
+              <span class="text-xs w-10">5星</span>
+              <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+                <div id="star5Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              </div>
+              <span id="star5Percent" class="text-xs w-8 text-right">0%</span>
+            </div>
+            <!-- 4星 -->
+            <div class="flex items-center">
+              <span class="text-xs w-10">4星</span>
+              <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+                <div id="star4Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              </div>
+              <span id="star4Percent" class="text-xs w-8 text-right">0%</span>
+            </div>
+            <!-- 3星 -->
+            <div class="flex items-center">
+              <span class="text-xs w-10">3星</span>
+              <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+                <div id="star3Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              </div>
+              <span id="star3Percent" class="text-xs w-8 text-right">0%</span>
+            </div>
+            <!-- 2星 -->
+            <div class="flex items-center">
+              <span class="text-xs w-10">2星</span>
+              <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+                <div id="star2Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              </div>
+              <span id="star2Percent" class="text-xs w-8 text-right">0%</span>
+            </div>
+            <!-- 1星 -->
+            <div class="flex items-center">
+              <span class="text-xs w-10">1星</span>
+              <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+                <div id="star1Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              </div>
+              <span id="star1Percent" class="text-xs w-8 text-right">0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 服务评价分布（真实数据计算） -->
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">服务评价分布</h3>
+        <div class="space-y-3 mb-6">
+          <!-- 老年长居康养 -->
+          <div class="flex items-center">
+            <span class="text-sm w-32">老年长居康养</span>
+            <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+              <div id="service老年长居康养Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="service老年长居康养Score" class="text-sm w-8 text-right">0.0</span>
+          </div>
+          <!-- 上班族短途疗愈 -->
+          <div class="flex items-center">
+            <span class="text-sm w-32">上班族短途疗愈</span>
+            <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+              <div id="service上班族短途疗愈Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="service上班族短途疗愈Score" class="text-sm w-8 text-right">0.0</span>
+          </div>
+          <!-- 家庭康养套餐 -->
+          <div class="flex items-center">
+            <span class="text-sm w-32">家庭康养套餐</span>
+            <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+              <div id="service家庭康养套餐Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="service家庭康养套餐Score" class="text-sm w-8 text-right">0.0</span>
+          </div>
+          <!-- 农场认养 -->
+          <div class="flex items-center">
+            <span class="text-sm w-32">农场认养</span>
+            <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
+              <div id="service农场认养Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="service农场认养Score" class="text-sm w-8 text-right">0.0</span>
+          </div>
+        </div>
+        
+        <!-- 评价总数（真实数量） -->
+        <div class="text-center text-sm text-gray-500">
+          基于 <span id="reviewCount">0</span> 条用户真实评价
+        </div>
+      </div>
+    </div>
+
+    <!-- 最新评价列表（仅展示真实提交的评论） -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">最新评价</h2>
+        <div class="flex space-x-4">
+          <!-- 筛选下拉 -->
+          <select id="reviewFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+            <option value="all">全部评价</option>
+            <option value="5">5星评价</option>
+            <option value="4">4星及以上</option>
+            <option value="3">3星及以上</option>
+            <option value="老年长居康养">老年长居康养</option>
+            <option value="上班族短途疗愈">上班族短途疗愈</option>
+            <option value="家庭康养套餐">家庭康养套餐</option>
+            <option value="农场认养">农场认养</option>
+          </select>
+          <!-- 排序下拉 -->
+          <select id="reviewSort" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+            <option value="latest">最新优先</option>
+            <option value="highest">评分最高</option>
+            <option value="lowest">评分最低</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- 评论列表容器 -->
+      <div id="reviewsList" class="space-y-4">
+        <!-- 仅渲染用户真实提交的评论，初始为空 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 回到顶部按钮（匹配截图） -->
+  <button class="fixed bottom-6 right-6 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+</section>
+
+<!-- 预约表单（保留，适配样式） -->
+<section id="booking" class="py-12 bg-white">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">预约康养体验</h2>
+      <p class="text-gray-600">填写下方表单，开始您的乡村康养之旅</p>
+    </div>
+    
+    <div class="bg-neutral rounded-lg shadow-card p-6">
+      <form id="bookingForm">
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm mb-2">姓名</label>
+            <input type="text" id="name" name="name" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                   placeholder="请输入您的姓名" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm mb-2">电话</label>
+            <input type="tel" id="phone" name="phone" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                   placeholder="请输入您的手机号码" required>
+          </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm mb-2">预约服务</label>
+            <select id="service" name="service" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" required>
+              <option value="">请选择服务类型</option>
+              <option value="elder">老年长居康养</option>
+              <option value="worker">上班族短途疗愈</option>
+              <option value="family">家庭康养套餐</option>
+              <option value="farm">农场认养</option>
+              <option value="camping">自然疗愈露营</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm mb-2">预计日期</label>
+            <input type="date" id="date" name="date" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" required>
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm mb-2">参与人数</label>
+          <input type="number" id="people" name="people" min="1" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                 placeholder="请输入参与人数" required>
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm mb-2">特殊需求</label>
+          <textarea id="message" name="message" rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                    placeholder="请告诉我们您的特殊需求或健康状况"></textarea>
+        </div>
+        
+        <button type="submit" 
+                class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-md font-medium transition-colors">
+          提交预约
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
 
     <!-- 联系我们 -->
     <section id="contact" class="py-20">
