@@ -7,16 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
-        // 配置Tailwind自定义主题
+        // 配置Tailwind自定义主题（高雅紫色系）
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#2E7D32',     // 绿色-代表田园
-                        secondary: '#1976D2',   // 蓝色-代表海洋
-                        accent: '#F57C00',      // 橙色-代表活力
-                        neutral: '#F5F5F5',     // 浅灰-背景
-                        dark: '#263238'         // 深灰-文字
+                        primary: '#8B5CF6',     // 主紫（温柔高雅）
+                        secondary: '#7C3AED',   // 深紫（强调色）
+                        accent: '#A78BFA',      // 浅紫（辅助色）
+                        neutral: '#FAFAFA',     // 超浅灰（卡片背景）
+                        dark: '#1F2937'         // 深灰（文字）
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -31,7 +31,7 @@
         content-visibility: auto;
     }
     .text-shadow {
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 弱化阴影更高级 */
     }
     .transition-custom {
         transition: all 0.3s ease-in-out;
@@ -56,37 +56,37 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Inter", "Microsoft YaHei", Arial, sans-serif;
+    font-family: "Inter", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
 }
 
-/* 蓝色主题色彩系统 - 更强调背景蓝色 */
+/* 高雅紫色主题色彩系统 - 层次丰富的紫色系 */
 :root {
-    --bg-primary: #E6F0FF; /* 主背景蓝色（浅） */
-    --bg-secondary: #D1E0FF; /* 次要背景蓝色（稍深） */
-    --primary: #165DFF; /* 主蓝色 - 信任与平静 */
-    --primary-light: #84A9FF; /* 亮蓝色 */
-    --primary-dark: #0E42CC; /* 深蓝强调 */
-    --secondary: #36CFC9; /* 辅助蓝绿色 - 活力 */
-    --accent: #722ED1; /* 点缀色 - 保持一些对比 */
-    --text-primary: #1D2129; /* 主要文字 */
-    --text-secondary: #4E5969; /* 次要文字 */
-    --text-tertiary: #86909C; /*  tertiary文字 */
-    --border-light: #B9CFFF; /* 蓝色系边框 */
-    --white: #FFFFFF; /* 白色 - 用于卡片背景，形成对比 */
+    --bg-primary: #F5F3FF; /* 极浅紫（主背景，柔和不刺眼） */
+    --bg-secondary: #EEE9FF; /* 浅紫（渐变背景） */
+    --primary: #8B5CF6; /* 主紫（温柔高雅） */
+    --primary-light: #A78BFA; /* 浅紫（hover/次要元素） */
+    --primary-dark: #7C3AED; /* 深紫（强调/标题） */
+    --primary-deep: #6D28D9; /* 超深紫（按钮hover） */
+    --secondary: #C4B5FD; /* 淡紫（边框/辅助） */
+    --text-primary: #1F2937; /* 深灰文字（保证可读性） */
+    --text-secondary: #4B5563; /* 中灰文字 */
+    --text-tertiary: #6B7280; /* 浅灰文字 */
+    --white: #FFFFFF; /* 纯白（卡片背景） */
+    --star-gold: #FBBF24; /* 金色星星（对比色） */
 }
 
-/* 页面整体背景设为蓝色 */
+/* 页面整体背景 - 渐变紫色，柔和高级 */
 body {
     background-color: var(--bg-primary);
-    /* 可以添加轻微的渐变让背景更有层次感 */
-    background-image: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+    background-image: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem);
+    padding-top: 8rem; /* 给固定导航栏留空间 */
     color: var(--text-primary);
     line-height: 1.6;
-    min-height: 100vh; /* 确保背景充满整个页面 */
+    min-height: 100vh;
 }
 
-/* 页面标题样式 */
+/* 页面标题样式 - 紫色系 */
 .page-title {
     text-align: center;
     font-size: clamp(1.75rem, 5vw, 2.5rem);
@@ -95,6 +95,7 @@ body {
     margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
     position: relative;
     text-balance: balance;
+    text-shadow: 0 1px 2px rgba(124, 58, 237, 0.1);
 }
 
 .page-title::after {
@@ -102,7 +103,7 @@ body {
     display: block;
     width: 80px;
     height: 4px;
-    background-color: var(--primary);
+    background: linear-gradient(to right, var(--primary-light), var(--primary));
     margin: 12px auto 0;
     border-radius: 2px;
 }
@@ -136,20 +137,22 @@ body {
     }
 }
 
-/* 套餐卡片样式 - 白色背景与蓝色形成对比 */
+/* 套餐卡片样式 - 白色背景对比紫色，更显高级 */
 .package-card {
     background-color: var(--white);
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.1);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.08);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(22, 93, 255, 0.15);
-    card-hover: true;
+    border: 1px solid var(--secondary);
+    transition: all 0.4s ease;
 }
 
 .package-card:hover {
-    box-shadow: 0 12px 24px rgba(22, 93, 255, 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(139, 92, 246, 0.15);
+    border-color: var(--primary-light);
 }
 
 /* 套餐图片样式 */
@@ -171,7 +174,7 @@ body {
     transform: scale(1.08);
 }
 
-/* 套餐标签样式 */
+/* 套餐标签样式 - 不同层次的紫色 */
 .package-tag {
     position: absolute;
     top: 16px;
@@ -181,26 +184,27 @@ body {
     padding: 4px 10px;
     border-radius: 20px;
     z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* 套餐标签颜色 - 蓝色系变化 */
 .tag-youth {
-    background-color: rgba(22, 93, 255, 0.9);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
     color: var(--white);
 }
 
 .tag-parent {
-    background-color: rgba(54, 207, 201, 0.9);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: var(--white);
 }
 
 .tag-elite {
-    background-color: rgba(114, 46, 209, 0.9);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-deep));
     color: var(--white);
 }
 
 .tag-elder {
-    background-color: rgba(25, 118, 210, 0.9);
+    background: linear-gradient(135deg, var(--secondary), var(--primary-light));
     color: var(--white);
 }
 
@@ -259,21 +263,21 @@ body {
     font-size: 14px;
 }
 
-/* 套餐图标颜色 - 蓝色系 */
+/* 套餐图标颜色 - 紫色系层次 */
 .icon-youth {
     color: var(--primary);
 }
 
 .icon-parent {
-    color: var(--secondary);
+    color: var(--primary-dark);
 }
 
 .icon-elite {
-    color: var(--accent);
+    color: var(--primary-deep);
 }
 
 .icon-elder {
-    color: var(--primary-dark);
+    color: var(--primary-light);
 }
 
 /* 价格与评分区域 */
@@ -311,7 +315,7 @@ body {
 }
 
 .rating-stars {
-    color: #FFC107; /* 保持星星为金色，与蓝色形成和谐对比 */
+    color: var(--star-gold); /* 金色星星与紫色形成和谐对比 */
     font-size: 13px;
     margin-right: 6px;
 }
@@ -321,7 +325,7 @@ body {
     color: var(--text-tertiary);
 }
 
-/* 按钮样式（与蓝色主题协调） */
+/* 按钮样式 - 渐变紫色，高级感拉满 */
 .book-btn {
     display: block;
     width: 100%;
@@ -331,63 +335,114 @@ body {
     font-weight: 600;
     transition: all 0.3s ease;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-youth {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
     color: white;
 }
 
 .btn-youth:hover {
-    background-color: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 
 .btn-parent {
-    background-color: var(--secondary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
 }
 
 .btn-parent:hover {
-    background-color: #2DB4AE;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-deep));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 
 .btn-elder {
-    background-color: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-deep));
     color: white;
 }
 
 .btn-elder:hover {
-    background-color: #0A34A0;
+    background: linear-gradient(135deg, var(--primary-deep), #5B21B6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+/* 导航栏专属样式 - 高雅紫色系 */
+#navbar {
+    font-family: "Inter", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 12px rgba(139, 92, 246, 0.05);
+}
+#navbar .nav-text {
+    color: var(--text-primary);
+}
+#navbar .nav-text:hover {
+    color: var(--primary);
+}
+#navbar .logo-text {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+#navbar .book-btn-nav {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+}
+#navbar .book-btn-nav:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-deep));
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+#navbar .menu-btn {
+    color: var(--primary);
+}
+#mobileMenu {
+    background: var(--white);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.1);
+}
+#mobileMenu a {
+    color: var(--text-primary);
+}
+#mobileMenu a:hover {
+    color: var(--primary);
+}
+#mobileMenu .book-btn-nav {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
 }
     </style>
 </head>
 <body class="font-sans text-dark bg-white">
-    <!-- 导航栏 -->
-    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-sm">
+    <!-- 导航栏（高雅紫色系） -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 top-0 left-0">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center space-x-2">
-                <i class="fa fa-leaf text-primary text-2xl"></i>
-                <span class="text-xl font-bold text-primary">俚岛康养</span>
+                <i class="fa fa-leaf logo-text text-2xl"></i>
+                <span class="text-xl logo-text">俚岛康养</span>
             </a>
             
             <!-- 桌面导航 -->
             <nav class="hidden md:flex space-x-8">
-                <a href="#home" class="font-medium hover:text-primary transition-custom">首页</a>
-                <a href="#packages" class="font-medium hover:text-primary transition-custom">康养套餐</a>
-                <a href="#farm" class="font-medium hover:text-primary transition-custom">农场认养</a>
-                <a href="#experiences" class="font-medium hover:text-primary transition-custom">场景体验</a>
-                <a href="#about" class="font-medium hover:text-primary transition-custom">关于我们</a>
-                <a href="#reviews" class="font-medium hover:text-primary transition-custom">用户评价</a>
-                <a href="#contact" class="font-medium hover:text-primary transition-custom">联系我们</a>
+                <a href="#home" class="font-medium nav-text transition-custom">首页</a>
+                <a href="#packages" class="font-medium nav-text transition-custom">康养套餐</a>
+                <a href="#farm" class="font-medium nav-text transition-custom">农场认养</a>
+                <a href="#experiences" class="font-medium nav-text transition-custom">场景体验</a>
+                <a href="#about" class="font-medium nav-text transition-custom">关于我们</a>
+                <a href="#reviews" class="font-medium nav-text transition-custom">用户评价</a>
+                <a href="#contact" class="font-medium nav-text transition-custom">联系我们</a>
             </nav>
             
             <!-- 预约按钮 -->
-            <a href="#booking" class="hidden md:block bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-full transition-custom shadow-md hover:shadow-lg">
+            <a href="#booking" class="hidden md:block book-btn-nav hover:bg-primary/90 px-5 py-2 rounded-full transition-custom shadow-md hover:shadow-lg">
                 立即预约
             </a>
             
             <!-- 移动端菜单按钮 -->
-            <button id="menuBtn" class="md:hidden text-dark text-xl">
+            <button id="menuBtn" class="md:hidden menu-btn text-xl">
                 <i class="fa fa-bars"></i>
             </button>
         </div>
@@ -402,7 +457,7 @@ body {
                 <a href="#about" class="py-2 border-b border-gray-100 hover:text-primary transition-custom">关于我们</a>
                 <a href="#reviews" class="py-2 border-b border-gray-100 hover:text-primary transition-custom">用户评价</a>
                 <a href="#contact" class="py-2 hover:text-primary transition-custom">联系我们</a>
-                <a href="#booking" class="bg-primary text-white px-5 py-2 rounded-full text-center shadow-md">
+                <a href="#booking" class="book-btn-nav px-5 py-2 rounded-full text-center shadow-md">
                     立即预约
                 </a>
             </div>
@@ -740,7 +795,7 @@ body {
                         <div class="farm-content active">
                             <div class="border rounded-lg overflow-hidden mb-6">
                                 <img src="lj6.jpg" alt="疗愈小菜园" class="w-full h-64 object-cover">
-                                <div class="p-4 bg-gray-50 border-t">
+                             git add .   <div class="p-4 bg-gray-50 border-t">
                                     <p class="text-sm text-gray-500">实景更新于：2025年10月15日</p>
                                     <p class="text-sm text-gray-500">对应位置：农场东侧3号区</p>
                                 </div>
