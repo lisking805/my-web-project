@@ -1698,7 +1698,252 @@ function renderRealReviewsList() {
   });
 }
 
-// 修复：更新评价统计（修复ID命名+数据类型）
+/<!-- 引入基础依赖 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Tailwind配置（匹配截图紫色系） -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#7c3aed', // 主紫色（匹配截图）
+        secondary: '#a855f7', // 浅紫
+        accent: '#c084fc', // 高亮紫
+        neutral: '#faf5ff', // 背景浅紫
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      }
+    }
+  }
+}
+</script>
+
+<!-- 页面头部导航（匹配截图） -->
+<header class="bg-white shadow-sm sticky top-0 z-10">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <span class="text-primary font-bold text-xl">俚岛康养</span>
+    </div>
+    <nav class="hidden md:flex space-x-6">
+      <a href="#" class="text-gray-700 hover:text-primary">首页</a>
+      <a href="#" class="text-gray-700 hover:text-primary">康养套餐</a>
+      <a href="#" class="text-gray-700 hover:text-primary">农场认养</a>
+      <a href="#" class="text-gray-700 hover:text-primary">场景体验</a>
+      <a href="#" class="text-gray-700 hover:text-primary">关于我们</a>
+      <a href="#reviews" class="text-primary font-medium">用户评价</a>
+      <a href="#" class="text-gray-700 hover:text-primary">联系我们</a>
+    </nav>
+    <button class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md transition-colors">
+      立即预约
+    </button>
+  </div>
+</header>
+
+<!-- 核心逻辑：添加localStorage持久化，解决评论刷新消失问题 -->
+<script>
+// 全局变量：从localStorage读取评论数据（持久化核心修改）
+let realReviewsData = JSON.parse(localStorage.getItem('kangyangReviews')) || [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. 评分星星交互
+  const ratingStars = document.querySelectorAll('.rating-star');
+  let selectedRating = 0;
+
+  ratingStars.forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.rating);
+      // 点亮选中的星星
+      ratingStars.forEach((s, idx) => {
+        s.classList.toggle('text-primary', idx < selectedRating);
+        s.classList.toggle('text-gray-300', idx >= selectedRating);
+      });
+    });
+  });
+
+  // 2. 表单提交逻辑（添加localStorage存储）
+  const reviewForm = document.getElementById('reviewForm');
+  reviewForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // 1. 获取表单真实输入数据
+    const userName = document.getElementById('reviewName').value.trim();
+    const serviceSelect = document.getElementById('reviewService');
+    const serviceType = serviceSelect.options[serviceSelect.selectedIndex].text;
+    const reviewContent = document.getElementById('reviewContent').value.trim();
+    const agreeCheckbox = document.getElementById('agreeCheck').checked;
+
+    // 2. 严格校验（确保数据真实有效）
+    if (!userName) {
+      alert('请填写您的姓名！');
+      return;
+    }
+    if (serviceSelect.value === '') {
+      alert('请选择体验的服务类型！');
+      return;
+    }
+    if (selectedRating === 0) {
+      alert('请为您的体验评分！');
+      return;
+    }
+    if (!reviewContent) {
+      alert('请填写您的评价内容！');
+      return;
+    }
+    if (!agreeCheckbox) {
+      alert('请确认您的评价真实有效！');
+      return;
+    }
+
+    // 3. 生成真实评论数据（无任何模拟值）
+    const newRealReview = {
+      id: Date.now(), // 时间戳作为唯一ID
+      name: userName,
+      service: serviceType,
+      rating: selectedRating,
+      content: reviewContent,
+      submitTime: new Date().toLocaleString('zh-CN'), // 真实提交时间
+      tags: getRealTagsFromContent(reviewContent)
+    };
+
+    // 4. 存入数组 + 持久化到localStorage（核心修改）
+    realReviewsData.unshift(newRealReview);
+    localStorage.setItem('kangyangReviews', JSON.stringify(realReviewsData)); // 新增：保存到本地存储
+
+    // 5. 动态渲染评论列表
+    renderRealReviewsList();
+
+    // 6. 动态更新统计数据
+    updateRealReviewStats();
+
+    // 7. 重置表单和评分
+    reviewForm.reset();
+    ratingStars.forEach(s => {
+      s.classList.remove('text-primary');
+      s.classList.add('text-gray-300');
+    });
+    selectedRating = 0;
+
+    alert('评价提交成功！已展示在最新评价列表中');
+  });
+
+  // 3. 初始化渲染
+  renderRealReviewsList();
+  updateRealReviewStats();
+
+  // 4. 筛选/排序逻辑
+  document.getElementById('reviewFilter').addEventListener('change', renderRealReviewsList);
+  document.getElementById('reviewSort').addEventListener('change', renderRealReviewsList);
+});
+
+// 新增：清空所有评论的函数
+function clearAllReviews() {
+  if (confirm('确定要清空所有评论吗？此操作不可恢复！')) {
+    realReviewsData = [];
+    localStorage.removeItem('kangyangReviews'); // 删除本地存储的评论
+    renderRealReviewsList();
+    updateRealReviewStats();
+    alert('所有评论已清空');
+  }
+}
+
+// 辅助函数：从用户评价内容提取标签
+function getRealTagsFromContent(content) {
+  const tags = [];
+  // 关键词匹配（可根据需求扩展）
+  if (content.includes('舒适') || content.includes('住宿')) tags.push('住宿舒适');
+  if (content.includes('健康') || content.includes('饮食')) tags.push('饮食健康');
+  if (content.includes('服务')) tags.push('服务周到');
+  if (content.includes('减压') || content.includes('放松')) tags.push('减压效果好');
+  if (content.includes('安静') || content.includes('环境')) tags.push('环境安静');
+  if (content.includes('家庭') || content.includes('孩子')) tags.push('适合家庭');
+  
+  // 若无匹配标签，显示“真实评价”
+  return tags.length > 0 ? tags : ['真实评价'];
+}
+
+// 渲染真实评论列表
+function renderRealReviewsList() {
+  const container = document.getElementById('reviewsList');
+  container.innerHTML = '';
+
+  // 无评论时显示提示
+  if (realReviewsData.length === 0) {
+    container.innerHTML = `
+      <div class="bg-white rounded-lg shadow-card p-6 text-center text-gray-500">
+        暂无用户评价，快来提交您的真实体验吧！
+      </div>
+    `;
+    return;
+  }
+
+  // 获取筛选/排序条件
+  const filterValue = document.getElementById('reviewFilter').value;
+  const sortValue = document.getElementById('reviewSort').value;
+
+  // 复制真实数据避免修改原数组
+  let filteredReviews = [...realReviewsData];
+
+  // 筛选逻辑
+  if (filterValue !== 'all') {
+    if (['5', '4', '3'].includes(filterValue)) {
+      // 按评分筛选
+      const minRating = parseInt(filterValue);
+      filteredReviews = filteredReviews.filter(r => r.rating >= minRating);
+    } else {
+      // 按服务类型筛选
+      filteredReviews = filteredReviews.filter(r => r.service.includes(filterValue));
+    }
+  }
+
+  // 排序逻辑
+  if (sortValue === 'highest') {
+    filteredReviews.sort((a, b) => b.rating - a.rating); // 高分优先
+  } else if (sortValue === 'lowest') {
+    filteredReviews.sort((a, b) => a.rating - b.rating); // 低分优先
+  } else {
+    filteredReviews.sort((a, b) => b.id - a.id); // 最新提交优先
+  }
+
+  // 渲染每条真实提交的评论
+  filteredReviews.forEach(review => {
+    const reviewCard = document.createElement('div');
+    reviewCard.className = 'bg-white rounded-lg shadow-card p-4 mb-4';
+    
+    // 生成真实评分对应的星级
+    const starsHtml = Array(review.rating).fill('<i class="fa fa-star text-primary"></i>').join('');
+
+    reviewCard.innerHTML = `
+      <div class="flex justify-between items-start mb-3">
+        <div class="flex items-center">
+          <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3 flex items-center justify-center">
+            <span class="text-primary font-bold">${review.name.charAt(0)}</span>
+          </div>
+          <div>
+            <h4 class="font-medium">${review.name}</h4>
+            <p class="text-xs text-gray-500">${review.service} · ${review.submitTime}</p>
+          </div>
+        </div>
+        <div class="flex">${starsHtml}</div>
+      </div>
+      <p class="text-gray-700 text-sm mb-3">${review.content}</p>
+      <div class="flex flex-wrap gap-2">
+        ${review.tags.map(tag => `
+          <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">${tag}</span>
+        `).join('')}
+      </div>
+    `;
+
+    container.appendChild(reviewCard);
+  });
+}
+
+// 更新真实评价统计
 function updateRealReviewStats() {
   const totalReviews = realReviewsData.length;
   
@@ -1714,21 +1959,15 @@ function updateRealReviewStats() {
 
   // 2. 星级分布
   const ratingCounts = { 5:0, 4:0, 3:0, 2:0, 1:0 };
-  realReviewsData.forEach(r => {
-    const rating = Math.min(Math.max(r.rating, 1), 5); // 限制评分范围1-5
-    ratingCounts[rating]++;
-  });
+  realReviewsData.forEach(r => ratingCounts[r.rating]++);
 
   [5,4,3,2,1].forEach(star => {
     const percent = totalReviews > 0 ? Math.round((ratingCounts[star] / totalReviews) * 100) : 0;
-    // 修复：ID命名中移除特殊字符，避免DOM查找失败
-    const barId = `star${star}Bar`;
-    const percentId = `star${star}Percent`;
-    document.getElementById(barId).style.width = `${percent}%`;
-    document.getElementById(percentId).textContent = `${percent}%`;
+    document.getElementById(`star${star}Bar`).style.width = `${percent}%`;
+    document.getElementById(`star${star}Percent`).textContent = `${percent}%`;
   });
 
-  // 3. 服务评价分布（修复ID命名问题）
+  // 3. 服务评价分布
   const serviceMap = {};
   realReviewsData.forEach(r => {
     if (!serviceMap[r.service]) {
@@ -1738,23 +1977,20 @@ function updateRealReviewStats() {
     serviceMap[r.service].score += r.rating;
   });
 
-  // 服务列表与DOM ID映射（修复特殊字符问题）
-  const serviceConfig = [
-    { name: '老年长居康养', id: 'serviceElderBar', scoreId: 'serviceElderScore' },
-    { name: '上班族短途疗愈', id: 'serviceWorkerBar', scoreId: 'serviceWorkerScore' },
-    { name: '家庭康养套餐', id: 'serviceFamilyBar', scoreId: 'serviceFamilyScore' },
-    { name: '农场认养', id: 'serviceFarmBar', scoreId: 'serviceFarmScore' }
-  ];
-
-  serviceConfig.forEach(item => {
-    if (serviceMap[item.name]) {
-      const avgScore = (serviceMap[item.name].score / serviceMap[item.name].total).toFixed(1);
+  // 仅展示有数据的服务类型
+  const serviceList = ['老年长居康养', '上班族短途疗愈', '家庭康养套餐', '农场认养'];
+  serviceList.forEach(service => {
+    const barId = `service${service.replace(/[^a-zA-Z]/g, '')}Bar`;
+    const scoreId = `service${service.replace(/[^a-zA-Z]/g, '')}Score`;
+    
+    if (serviceMap[service]) {
+      const avgScore = (serviceMap[service].score / serviceMap[service].total).toFixed(1);
       const percent = Math.round((avgScore / 5) * 100);
-      document.getElementById(item.id).style.width = `${percent}%`;
-      document.getElementById(item.scoreId).textContent = avgScore;
+      document.getElementById(barId).style.width = `${percent}%`;
+      document.getElementById(scoreId).textContent = avgScore;
     } else {
-      document.getElementById(item.id).style.width = '0%';
-      document.getElementById(item.scoreId).textContent = '0.0';
+      document.getElementById(barId).style.width = '0%';
+      document.getElementById(scoreId).textContent = '0.0';
     }
   });
 
@@ -1763,7 +1999,7 @@ function updateRealReviewStats() {
 }
 </script>
 
-<!-- 主内容区：修复DOM ID命名（移除特殊字符） -->
+<!-- 主内容区：用户评价模块 -->
 <section id="reviews" class="bg-neutral min-h-screen py-8 px-4">
   <div class="container mx-auto max-w-6xl">
     <!-- 表单+统计区域 -->
@@ -1894,40 +2130,40 @@ function updateRealReviewStats() {
           </div>
         </div>
         
-        <!-- 服务评价分布（修复ID命名） -->
+        <!-- 服务评价分布 -->
         <h3 class="text-lg font-semibold text-gray-800 mb-4">服务评价分布</h3>
         <div class="space-y-3 mb-6">
           <!-- 老年长居康养 -->
           <div class="flex items-center">
             <span class="text-sm w-32">老年长居康养</span>
             <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
-              <div id="serviceElderBar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              <div id="service老年长居康养Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
             </div>
-            <span id="serviceElderScore" class="text-sm w-8 text-right">0.0</span>
+            <span id="service老年长居康养Score" class="text-sm w-8 text-right">0.0</span>
           </div>
           <!-- 上班族短途疗愈 -->
           <div class="flex items-center">
             <span class="text-sm w-32">上班族短途疗愈</span>
             <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
-              <div id="serviceWorkerBar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              <div id="service上班族短途疗愈Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
             </div>
-            <span id="serviceWorkerScore" class="text-sm w-8 text-right">0.0</span>
+            <span id="service上班族短途疗愈Score" class="text-sm w-8 text-right">0.0</span>
           </div>
           <!-- 家庭康养套餐 -->
           <div class="flex items-center">
             <span class="text-sm w-32">家庭康养套餐</span>
             <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
-              <div id="serviceFamilyBar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              <div id="service家庭康养套餐Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
             </div>
-            <span id="serviceFamilyScore" class="text-sm w-8 text-right">0.0</span>
+            <span id="service家庭康养套餐Score" class="text-sm w-8 text-right">0.0</span>
           </div>
           <!-- 农场认养 -->
           <div class="flex items-center">
             <span class="text-sm w-32">农场认养</span>
             <div class="flex-1 mx-2 bg-gray-200 rounded-full h-2">
-              <div id="serviceFarmBar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+              <div id="service农场认养Bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
             </div>
-            <span id="serviceFarmScore" class="text-sm w-8 text-right">0.0</span>
+            <span id="service农场认养Score" class="text-sm w-8 text-right">0.0</span>
           </div>
         </div>
         
@@ -1943,7 +2179,7 @@ function updateRealReviewStats() {
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-800">最新评价</h2>
         <div class="flex space-x-4">
-          <!-- 清空评论按钮 -->
+          <!-- 新增：清空评论按钮 -->
           <button onclick="clearAllReviews()" class="text-sm text-red-500 hover:underline transition-colors">
             清空所有评论
           </button>
@@ -1969,7 +2205,7 @@ function updateRealReviewStats() {
       
       <!-- 评论列表容器 -->
       <div id="reviewsList" class="space-y-4">
-        <!-- 评论会动态渲染 -->
+        <!-- 仅渲染用户真实提交的评论，初始为空 -->
       </div>
     </div>
   </div>
@@ -1978,7 +2214,6 @@ function updateRealReviewStats() {
   <button class="fixed bottom-6 right-6 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
     <i class="fa fa-arrow-up"></i>
   </button>
-</section>
 </section>
 <!-- 预约表单（保留，适配样式） -->
 <section id="booking" class="py-12 bg-white">
@@ -2220,333 +2455,304 @@ function updateRealReviewStats() {
         <i class="fa fa-arrow-up"></i>
     </button>
 
-   <!-- 先引入LeanCloud SDK -->
-<script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.17.0/dist/av-min.js"></script>
-<!-- JavaScript -->
-<script>
-    // ========== 1. LeanCloud 初始化配置 ==========
-    // 替换成你自己的AppID、AppKey和serverURLs
-    AV.init({
-        appId: "9kbkci2TiT1mo1wLOO2Nouhr-gzGzoHsz", // 你的AppID
-        appKey: "yUJW3TNpjhxMhLZni8zzgw6L", // 你的AppKey
-        serverURLs: "https://9kbci2t1.lc-cn-n1-shared.com" // 你的serverURL
-    });
-
-    // ========== 2. 原有功能代码（保持不变） ==========
-    // 移动端菜单切换
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-        menuBtn.innerHTML = mobileMenu.classList.contains('hidden') 
-            ? '<i class="fa fa-bars"></i>' 
-            : '<i class="fa fa-times"></i>';
-    });
-    
-    // 导航栏滚动效果
-    const navbar = document.getElementById('navbar');
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.classList.add('py-2', 'shadow-md');
-            navbar.classList.remove('py-3', 'shadow-sm');
-        } else {
-            navbar.classList.add('py-3', 'shadow-sm');
-            navbar.classList.remove('py-2', 'shadow-md');
-        }
-    });
-    
-    // 农场认养标签切换
-    const farmTabs = document.querySelectorAll('.farm-tab');
-    const farmContents = document.querySelectorAll('.farm-content');
-    
-    farmTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // 移除所有活跃状态
-            farmTabs.forEach(t => {
-                t.classList.remove('active', 'bg-primary', 'text-white');
-                t.classList.add('bg-gray-200', 'hover:bg-gray-300');
-            });
-            
-            // 添加当前活跃状态
-            tab.classList.add('active', 'bg-primary', 'text-white');
-            tab.classList.remove('bg-gray-200', 'hover:bg-gray-300');
-            
-            // 这里可以添加内容切换逻辑
-            // 实际项目中应该根据标签切换不同的内容
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuBtn.innerHTML = mobileMenu.classList.contains('hidden') 
+                ? '<i class="fa fa-bars"></i>' 
+                : '<i class="fa fa-times"></i>';
         });
-    });
-    
-    // 平滑滚动
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('py-2', 'shadow-md');
+                navbar.classList.remove('py-3', 'shadow-sm');
+            } else {
+                navbar.classList.add('py-3', 'shadow-sm');
+                navbar.classList.remove('py-2', 'shadow-md');
+            }
+        });
+        
+        // 农场认养标签切换
+        const farmTabs = document.querySelectorAll('.farm-tab');
+        const farmContents = document.querySelectorAll('.farm-content');
+        
+        farmTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有活跃状态
+                farmTabs.forEach(t => {
+                    t.classList.remove('active', 'bg-primary', 'text-white');
+                    t.classList.add('bg-gray-200', 'hover:bg-gray-300');
+                });
+                
+                // 添加当前活跃状态
+                tab.classList.add('active', 'bg-primary', 'text-white');
+                tab.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                
+                // 这里可以添加内容切换逻辑
+                // 实际项目中应该根据标签切换不同的内容
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动端菜单
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                }
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 回到顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                backToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 预约表单提交处理
+        const bookingForm = document.getElementById('bookingForm');
+        
+        bookingForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // 关闭移动端菜单
-            if (!mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
-            }
+            // 简单表单验证
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
             
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-    
-    // 回到顶部按钮
-    const backToTopBtn = document.getElementById('backToTop');
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            backToTopBtn.classList.remove('opacity-0', 'invisible');
-            backToTopBtn.classList.add('opacity-100', 'visible');
-        } else {
-            backToTopBtn.classList.add('opacity-0', 'invisible');
-            backToTopBtn.classList.remove('opacity-100', 'visible');
-        }
-    });
-    
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-    
-    // 预约表单提交处理
-    const bookingForm = document.getElementById('bookingForm');
-    
-    bookingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // 简单表单验证
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-        
-        if (name && phone) {
-            // 模拟表单提交
-            alert('预约提交成功！我们将尽快与您联系确认详情。');
-            bookingForm.reset();
-        } else {
-            alert('请填写姓名和手机号码');
-        }
-    });
-    
-    // ========== 3. 评价系统 - 集成LeanCloud（核心修改部分） ==========
-    // 星级评分（原有逻辑不变）
-    const ratingStars = document.querySelectorAll('.rating-star');
-    const ratingValue = document.getElementById('ratingValue');
-    
-    ratingStars.forEach(star => {
-        star.addEventListener('mouseover', () => {
-            const rating = parseInt(star.getAttribute('data-rating'));
-            highlightStars(rating);
-        });
-        
-        star.addEventListener('mouseout', () => {
-            const currentRating = parseInt(ratingValue.value);
-            highlightStars(currentRating || 0);
-        });
-        
-        star.addEventListener('click', () => {
-            const rating = parseInt(star.getAttribute('data-rating'));
-            ratingValue.value = rating;
-            highlightStars(rating);
-        });
-    });
-    
-    function highlightStars(rating) {
-        ratingStars.forEach(star => {
-            const starRating = parseInt(star.getAttribute('data-rating'));
-            if (starRating <= rating) {
-                star.classList.remove('text-gray-300');
-                star.classList.add('text-accent');
+            if (name && phone) {
+                // 模拟表单提交
+                alert('预约提交成功！我们将尽快与您联系确认详情。');
+                bookingForm.reset();
             } else {
-                star.classList.remove('text-accent');
-                star.classList.add('text-gray-300');
+                alert('请填写姓名和手机号码');
             }
         });
-    }
-    
-    // ========== 4. 评价表单提交 - 上传到LeanCloud ==========
-    const reviewForm = document.getElementById('reviewForm');
-    
-    reviewForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
         
-        // 验证评分
-        if (parseInt(ratingValue.value) === 0) {
-            alert('请给出您的评分');
-            return;
+        // 评价系统 - 星级评分
+        const ratingStars = document.querySelectorAll('.rating-star');
+        const ratingValue = document.getElementById('ratingValue');
+        
+        ratingStars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                highlightStars(rating);
+            });
+            
+            star.addEventListener('mouseout', () => {
+                const currentRating = parseInt(ratingValue.value);
+                highlightStars(currentRating || 0);
+            });
+            
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                ratingValue.value = rating;
+                highlightStars(rating);
+            });
+        });
+        
+        function highlightStars(rating) {
+            ratingStars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-accent');
+                } else {
+                    star.classList.remove('text-accent');
+                    star.classList.add('text-gray-300');
+                }
+            });
         }
         
-        // 获取表单数据
-        const name = document.getElementById('reviewName').value;
-        const service = document.getElementById('reviewService').options[document.getElementById('reviewService').selectedIndex].text;
-        const content = document.getElementById('reviewContent').value;
-        const rating = parseInt(ratingValue.value);
-
-        try {
-            // 1. 创建Review类并保存数据到LeanCloud
-            const Review = AV.Object.extend('Review');
-            const review = new Review();
-            await review.save({
-                name: name,
-                service: service,
-                content: content,
-                rating: rating,
-                createTime: new Date() // 记录创建时间
-            });
-
+        // 评价表单提交
+        const reviewForm = document.getElementById('reviewForm');
+        
+        reviewForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 验证评分
+            if (parseInt(ratingValue.value) === 0) {
+                alert('请给出您的评分');
+                return;
+            }
+            
+            // 获取表单数据
+            const name = document.getElementById('reviewName').value;
+            const service = document.getElementById('reviewService').options[document.getElementById('reviewService').selectedIndex].text;
+            const content = document.getElementById('reviewContent').value;
+            const rating = parseInt(ratingValue.value);
+            
+            // 模拟提交成功
             alert('感谢您的评价！您的反馈对我们非常重要。');
             
-            // 2. 把新评价添加到页面（前端展示）
-            addReviewToPage({
-                name: name,
-                service: service,
-                content: content,
-                rating: rating,
-                createTime: new Date()
-            });
+            // 创建新评价元素并添加到列表顶部
+            const reviewsContainer = document.getElementById('reviewsContainer');
             
-            // 3. 重置表单
+            // 生成星级HTML
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += i <= rating ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+            }
+            
+            // 获取当前日期
+            const today = new Date();
+            const dateString = today.getFullYear() + '-' + 
+                              (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                              today.getDate().toString().padStart(2, '0');
+            
+            // 创建新评价HTML
+            const newReviewHtml = `
+                <div class="bg-white p-6 rounded-xl shadow-md animate-fadeIn">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                                <img src="https://picsum.photos/id/${Math.floor(Math.random() * 100)}/100/100" alt="${name}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">${name}</h4>
+                                <p class="text-sm text-gray-500">${service} · ${dateString}</p>
+                            </div>
+                        </div>
+                        <div class="flex text-accent">
+                            ${starsHtml}
+                        </div>
+                    </div>
+                    <p class="text-gray-600">${content}</p>
+                </div>
+            `;
+            
+            // 添加到评价列表顶部
+            reviewsContainer.insertAdjacentHTML('afterbegin', newReviewHtml);
+            
+            // 重置表单
             reviewForm.reset();
             ratingValue.value = 0;
             highlightStars(0);
-        } catch (error) {
-            // 捕获错误并提示
-            console.error('提交评价失败：', error);
-            alert(`提交失败：${error.message}`);
-        }
-    });
-
-    // ========== 5. 工具函数：添加评价到页面 ==========
-    function addReviewToPage(reviewData) {
-        const reviewsContainer = document.getElementById('reviewsContainer');
+        });
         
-        // 生成星级HTML
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-            starsHtml += i <= reviewData.rating ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
-        }
+        // 加载更多评价
+        const loadMoreBtn = document.getElementById('loadMoreReviews');
+        let reviewCount = 3; // 当前已有3条评价
         
-        // 格式化日期
-        const date = new Date(reviewData.createTime);
-        const dateString = date.getFullYear() + '-' + 
-                          (date.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                          date.getDate().toString().padStart(2, '0');
-        
-        // 创建新评价HTML
-        const newReviewHtml = `
-            <div class="bg-white p-6 rounded-xl shadow-md animate-fadeIn">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
-                            <img src="https://picsum.photos/id/${Math.floor(Math.random() * 100)}/100/100" alt="${reviewData.name}" class="w-full h-full object-cover">
+        loadMoreBtn.addEventListener('click', () => {
+            // 模拟加载更多评价
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            const services = ['老年长居康养', '上班族短途疗愈', '家庭康养套餐', '农场认养', '自然疗愈露营', '文化康养之旅'];
+            const contents = [
+                "非常棒的体验，环境优美，服务周到，下次还会再来。",
+                "这里的空气特别清新，远离城市喧嚣，很适合放松身心。",
+                "工作人员都很热情，活动安排得很合理，学到了很多健康知识。",
+                "带着孩子来的，他在农场玩得很开心，还认识了很多植物。",
+                "住宿条件超出预期，干净舒适，很有乡村特色。"
+            ];
+            
+            // 每次加载2条评价
+            for (let i = 0; i < 2; i++) {
+                const rating = Math.floor(Math.random() * 2) + 4; // 4或5星
+                const serviceIndex = Math.floor(Math.random() * services.length);
+                const contentIndex = Math.floor(Math.random() * contents.length);
+                const randomId = Math.floor(Math.random() * 100);
+                
+                // 生成星级HTML
+                let starsHtml = '';
+                for (let j = 1; j <= 5; j++) {
+                    starsHtml += j <= rating ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+                }
+                
+                // 随机日期（近30天内）
+                const today = new Date();
+                const randomDays = Math.floor(Math.random() * 30);
+                const reviewDate = new Date(today);
+                reviewDate.setDate(today.getDate() - randomDays);
+                const dateString = reviewDate.getFullYear() + '-' + 
+                                  (reviewDate.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                                  reviewDate.getDate().toString().padStart(2, '0');
+                
+                const newReviewHtml = `
+                    <div class="bg-white p-6 rounded-xl shadow-md animate-fadeIn">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                                    <img src="https://picsum.photos/id/${randomId}/100/100" alt="用户头像" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">用户${reviewCount + i + 1}</h4>
+                                    <p class="text-sm text-gray-500">${services[serviceIndex]} · ${dateString}</p>
+                                </div>
+                            </div>
+                            <div class="flex text-accent">
+                                ${starsHtml}
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-semibold">${reviewData.name}</h4>
-                            <p class="text-sm text-gray-500">${reviewData.service} · ${dateString}</p>
-                        </div>
+                        <p class="text-gray-600">${contents[contentIndex]}</p>
                     </div>
-                    <div class="flex text-accent">
-                        ${starsHtml}
-                    </div>
-                </div>
-                <p class="text-gray-600">${reviewData.content}</p>
-            </div>
-        `;
-        
-        // 添加到评价列表顶部
-        reviewsContainer.insertAdjacentHTML('afterbegin', newReviewHtml);
-    }
-
-    // ========== 6. 页面加载时拉取LeanCloud中的评论 ==========
-    window.addEventListener('DOMContentLoaded', async () => {
-        try {
-            // 查询Review类，按创建时间倒序，最多取10条
-            const query = new AV.Query('Review');
-            query.descending('createTime'); // 最新的评论在前
-            query.limit(10); // 限制条数
-            const results = await query.find();
-
-            // 遍历查询结果，添加到页面
-            results.forEach(result => {
-                addReviewToPage({
-                    name: result.get('name'),
-                    service: result.get('service'),
-                    content: result.get('content'),
-                    rating: result.get('rating'),
-                    createTime: result.get('createTime')
-                });
-            });
-        } catch (error) {
-            console.error('拉取评论失败：', error);
-            alert(`加载评论失败：${error.message}`);
-        }
-    });
-
-    // ========== 7. 加载更多评价（集成LeanCloud） ==========
-    const loadMoreBtn = document.getElementById('loadMoreReviews');
-    let skipCount = 10; // 已加载10条，下次从第11条开始
-    
-    loadMoreBtn.addEventListener('click', async () => {
-        try {
-            const query = new AV.Query('Review');
-            query.descending('createTime');
-            query.skip(skipCount); // 跳过已加载的条数
-            query.limit(2); // 每次加载2条
-            const results = await query.find();
-
-            if (results.length === 0) {
+                `;
+                
+                reviewsContainer.insertAdjacentHTML('beforeend', newReviewHtml);
+            }
+            
+            reviewCount += 2;
+            
+            // 模拟数据加载完成
+            if (reviewCount >= 10) {
                 loadMoreBtn.textContent = "没有更多评价了";
                 loadMoreBtn.disabled = true;
                 loadMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                return;
             }
-
-            // 添加新加载的评论到页面
-            results.forEach(result => {
-                addReviewToPage({
-                    name: result.get('name'),
-                    service: result.get('service'),
-                    content: result.get('content'),
-                    rating: result.get('rating'),
-                    createTime: result.get('createTime')
-                });
-            });
-
-            skipCount += 2; // 更新跳过条数
-        } catch (error) {
-            console.error('加载更多评论失败：', error);
-            alert(`加载更多失败：${error.message}`);
+        });
+        
+        // 评价筛选和排序
+        const reviewFilter = document.getElementById('reviewFilter');
+        const reviewSort = document.getElementById('reviewSort');
+        
+        reviewFilter.addEventListener('change', filterReviews);
+        reviewSort.addEventListener('change', sortReviews);
+        
+        function filterReviews() {
+            // 实际项目中应该根据筛选条件过滤评价
+            alert(`已筛选：${reviewFilter.options[reviewFilter.selectedIndex].text}`);
         }
-    });
-    
-    // ========== 8. 评价筛选和排序（保留原有逻辑） ==========
-    const reviewFilter = document.getElementById('reviewFilter');
-    const reviewSort = document.getElementById('reviewSort');
-    
-    reviewFilter.addEventListener('change', filterReviews);
-    reviewSort.addEventListener('change', sortReviews);
-    
-    function filterReviews() {
-        // 实际项目中可扩展：根据筛选条件查询LeanCloud
-        alert(`已筛选：${reviewFilter.options[reviewFilter.selectedIndex].text}`);
-    }
-    
-    function sortReviews() {
-        // 实际项目中可扩展：根据排序条件重新查询LeanCloud
-        alert(`已排序：${reviewSort.options[reviewSort.selectedIndex].text}`);
-    }
-</script>
+        
+        function sortReviews() {
+            // 实际项目中应该根据排序条件重新排序评价
+            alert(`已排序：${reviewSort.options[reviewSort.selectedIndex].text}`);
+        }
+    </script>
 </body>
 </html>
+    
