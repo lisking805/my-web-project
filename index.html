@@ -1168,13 +1168,23 @@ tailwind.config = {
   </div>
 </header>
 
-<!-- 核心逻辑：添加localStorage持久化，解决评论刷新消失问题 -->
+<!-- 先引入LeanCloud SDK（必须放在核心逻辑前） -->
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.15.0/dist/av-min.js"></script>
+
+<!-- 核心逻辑：替换localStorage为LeanCloud云端存储 -->
 <script>
-// 全局变量：从localStorage读取评论数据（持久化核心修改）
-let realReviewsData = JSON.parse(localStorage.getItem('kangyangReviews')) || [];
+// 1. 初始化LeanCloud（替换成你自己的AppID、AppKey、服务器地址）
+AV.init({
+  appId: "9kbcic2t1Tmoawl002Nohrr-gzGozHSz",
+  appKey: "yUuD3TNpjqxhMlZniZt8ggW6Ml",
+  serverURL: "https://9kbcic2t1.lc-cn-n1-shared.com"
+});
+
+// 全局变量：存储从云端拉取的评论
+let realReviewsData = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. 评分星星交互
+  // 1. 评分星星交互（原有逻辑不变）
   const ratingStars = document.querySelectorAll('.rating-star');
   let selectedRating = 0;
 
@@ -1189,19 +1199,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. 表单提交逻辑（添加localStorage存储）
+  // 2. 表单提交逻辑（修改为云端存储）
   const reviewForm = document.getElementById('reviewForm');
-  reviewForm.addEventListener('submit', (e) => {
+  reviewForm.addEventListener('submit', async (e) => { // 新增async
     e.preventDefault();
 
-    // 1. 获取表单真实输入数据
+    // 1. 获取表单真实输入数据（原有逻辑不变）
     const userName = document.getElementById('reviewName').value.trim();
     const serviceSelect = document.getElementById('reviewService');
     const serviceType = serviceSelect.options[serviceSelect.selectedIndex].text;
     const reviewContent = document.getElementById('reviewContent').value.trim();
     const agreeCheckbox = document.getElementById('agreeCheck').checked;
 
-    // 2. 严格校验（确保数据真实有效）
+    // 2. 严格校验（原有逻辑不变）
     if (!userName) {
       alert('请填写您的姓名！');
       return;
@@ -1223,59 +1233,93 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 3. 生成真实评论数据（无任何模拟值）
-    const newRealReview = {
-      id: Date.now(), // 时间戳作为唯一ID
-      name: userName,
-      service: serviceType,
-      rating: selectedRating,
-      content: reviewContent,
-      submitTime: new Date().toLocaleString('zh-CN'), // 真实提交时间
-      tags: getRealTagsFromContent(reviewContent)
-    };
+    // 3. 生成评论数据并保存到LeanCloud云端（核心修改）
+    try {
+      const Review = AV.Object.extend('Review'); // 对应LeanCloud创建的Class
+      const reviewObj = new Review();
+      // 保存评论字段（和原有数据结构一致）
+      await reviewObj.save({
+        name: userName,
+        service: serviceType,
+        rating: selectedRating,
+        content: reviewContent,
+        submitTime: new Date().toLocaleString('zh-CN'),
+        tags: getRealTagsFromContent(reviewContent)
+      });
 
-    // 4. 存入数组 + 持久化到localStorage（核心修改）
-    realReviewsData.unshift(newRealReview);
-    localStorage.setItem('kangyangReviews', JSON.stringify(realReviewsData)); // 新增：保存到本地存储
+      // 4. 保存成功后重新拉取云端评论
+      await fetchCloudReviews();
 
-    // 5. 动态渲染评论列表
-    renderRealReviewsList();
+      // 5. 重置表单和评分（原有逻辑不变）
+      reviewForm.reset();
+      ratingStars.forEach(s => {
+        s.classList.remove('text-primary');
+        s.classList.add('text-gray-300');
+      });
+      selectedRating = 0;
 
-    // 6. 动态更新统计数据
-    updateRealReviewStats();
-
-    // 7. 重置表单和评分
-    reviewForm.reset();
-    ratingStars.forEach(s => {
-      s.classList.remove('text-primary');
-      s.classList.add('text-gray-300');
-    });
-    selectedRating = 0;
-
-    alert('评价提交成功！已展示在最新评价列表中');
+      alert('评价提交成功！所有用户都能看到这条评论啦～');
+    } catch (error) {
+      alert('提交失败：' + error.message);
+    }
   });
 
-  // 3. 初始化渲染
-  renderRealReviewsList();
-  updateRealReviewStats();
+  // 3. 初始化：从云端拉取评论（替换原有localStorage读取）
+  fetchCloudReviews();
 
-  // 4. 筛选/排序逻辑
+  // 4. 筛选/排序逻辑（原有逻辑不变）
   document.getElementById('reviewFilter').addEventListener('change', renderRealReviewsList);
   document.getElementById('reviewSort').addEventListener('change', renderRealReviewsList);
 });
 
-// 新增：清空所有评论的函数
-function clearAllReviews() {
-  if (confirm('确定要清空所有评论吗？此操作不可恢复！')) {
-    realReviewsData = [];
-    localStorage.removeItem('kangyangReviews'); // 删除本地存储的评论
+// 新增：从LeanCloud云端拉取所有评论
+async function fetchCloudReviews() {
+  try {
+    const Review = AV.Object.extend('Review');
+    const query = new AV.Query(Review);
+    query.descending('createdAt'); // 按提交时间倒序
+    const results = await query.find();
+
+    // 转换为前端可用的格式
+    realReviewsData = results.map(item => ({
+      id: item.id, // LeanCloud自动生成的唯一ID
+      name: item.get('name'),
+      service: item.get('service'),
+      rating: item.get('rating'),
+      content: item.get('content'),
+      submitTime: item.get('submitTime'),
+      tags: item.get('tags')
+    }));
+
+    // 渲染评论和统计
     renderRealReviewsList();
     updateRealReviewStats();
-    alert('所有评论已清空');
+  } catch (error) {
+    alert('拉取评论失败：' + error.message);
   }
 }
 
-// 辅助函数：从用户评价内容提取标签
+// 新增：清空所有云端评论的函数（替换原有localStorage清空）
+async function clearAllReviews() {
+  if (confirm('确定要清空所有评论吗？此操作不可恢复！')) {
+    try {
+      const Review = AV.Object.extend('Review');
+      const query = new AV.Query(Review);
+      const results = await query.find();
+      // 批量删除云端评论
+      await AV.Object.destroyAll(results);
+      // 清空本地数组并重新渲染
+      realReviewsData = [];
+      renderRealReviewsList();
+      updateRealReviewStats();
+      alert('所有评论已清空');
+    } catch (error) {
+      alert('清空失败：' + error.message);
+    }
+  }
+}
+
+// 辅助函数：从用户评价内容提取标签（原有逻辑不变）
 function getRealTagsFromContent(content) {
   const tags = [];
   // 关键词匹配（可根据需求扩展）
@@ -1290,7 +1334,7 @@ function getRealTagsFromContent(content) {
   return tags.length > 0 ? tags : ['真实评价'];
 }
 
-// 渲染真实评论列表
+// 渲染真实评论列表（原有逻辑不变）
 function renderRealReviewsList() {
   const container = document.getElementById('reviewsList');
   container.innerHTML = '';
@@ -1366,7 +1410,7 @@ function renderRealReviewsList() {
   });
 }
 
-// 更新真实评价统计
+// 更新真实评价统计（原有逻辑不变）
 function updateRealReviewStats() {
   const totalReviews = realReviewsData.length;
   
@@ -1422,7 +1466,7 @@ function updateRealReviewStats() {
 }
 </script>
 
-<!-- 主内容区：用户评价模块 -->
+<!-- 主内容区：用户评价模块（原有代码完全不变） -->
 <section id="reviews" class="bg-neutral min-h-screen py-8 px-4">
   <div class="container mx-auto max-w-6xl">
     <!-- 表单+统计区域 -->
@@ -1638,7 +1682,6 @@ function updateRealReviewStats() {
     <i class="fa fa-arrow-up"></i>
   </button>
 </section>
-
 <!-- 预约表单（保留，适配样式） -->
 <section id="booking" class="py-12 bg-white">
   <div class="container mx-auto px-4 max-w-4xl">
